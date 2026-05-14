@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
 import { rankLabel } from "@/lib/ranks";
@@ -20,7 +20,7 @@ function toCsv(rows: Record<string, unknown>[], columns: string[]): string {
   return `${header}\n${body}\n`;
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET() {
   const session = await requireSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

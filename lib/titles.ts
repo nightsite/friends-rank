@@ -31,7 +31,6 @@ export async function getTitlesForUser(userId: string): Promise<Title[]> {
     });
 
     const categories = await prisma.category.findMany();
-    const categoryById = new Map(categories.map((c) => [c.id, c]));
 
     for (const cat of categories) {
       const inCat = grouped

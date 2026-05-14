@@ -1,7 +1,7 @@
 const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
 export function formatRelative(past: Date, now: Date = new Date()): string {
-  let seconds = Math.round((past.getTime() - now.getTime()) / 1000);
+  const seconds = Math.round((past.getTime() - now.getTime()) / 1000);
   const sign = seconds < 0 ? -1 : 1;
   const abs = Math.abs(seconds);
 

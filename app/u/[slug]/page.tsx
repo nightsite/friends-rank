@@ -243,7 +243,7 @@ export default async function PublicProfilePage({ params }: Props) {
                   color: user.accentColor ?? "#fcd34d",
                 }}
               >
-                "{user.pinnedPost}"
+                &ldquo;{user.pinnedPost}&rdquo;
               </p>
             ) : null}
             {tags.length > 0 ? (

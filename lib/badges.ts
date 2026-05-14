@@ -28,7 +28,6 @@ function avg(nums: number[]): number {
 export function computeBadges({ me, users, ratings, categories }: Inputs): BadgeItem[] {
   const out: BadgeItem[] = [];
   const otherUserIds = users.map((u) => u.id).filter((id) => id !== me.id);
-  const total = users.length;
   const requiredGiven = otherUserIds.length * categories.length;
 
   if (me.streakCount >= 1) {
