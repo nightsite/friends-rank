@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
 import { PageShell } from "@/components/ui/PageShell";
@@ -30,16 +31,36 @@ import type { Metadata } from "next";
 
 type Props = { params: Promise<{ slug: string }> };
 
+const getProfileUser = cache(async (slug: string) =>
+  prisma.user.findUnique({
+    where: { slug },
+    include: {
+      followsReceived: true,
+      followsGiven: true,
+      profileRatingsReceived: {
+        include: { rater: true },
+        orderBy: { updatedAt: "desc" },
+        take: 12,
+      },
+      profilePostsReceived: {
+        include: {
+          author: true,
+          reactions: true,
+        },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      },
+    },
+  }),
+);
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const user = await prisma.user.findUnique({
-    where: { slug },
-    select: { displayName: true, bio: true, slug: true },
-  });
-  if (!user) return { title: "Profile not found · Friends Rank" };
-  const title = `${user.displayName} · Friends Rank`;
-  const description = user.bio?.trim() || `${user.displayName}'s Friends Rank profile.`;
-  const ogUrl = `/api/og/profile?slug=${encodeURIComponent(user.slug)}`;
+  // Keep metadata query-free to reduce DB pressure on serverless renders.
+  const safeSlug = slug.trim().toLowerCase();
+  const title = `@${safeSlug} · Friends Rank`;
+  const description = `Friends Rank profile for @${safeSlug}.`;
+  const ogUrl = `/api/og/profile?slug=${encodeURIComponent(safeSlug)}`;
   return {
     title,
     description,
@@ -72,40 +93,20 @@ export default async function PublicProfilePage({ params }: Props) {
   if (!session) redirect("/login");
   const { slug } = await params;
 
-  const user = await prisma.user.findUnique({
-    where: { slug },
-    include: {
-      followsReceived: true,
-      followsGiven: true,
-      profileRatingsReceived: {
-        include: { rater: true },
-        orderBy: { updatedAt: "desc" },
-        take: 12,
-      },
-      profilePostsReceived: {
-        include: {
-          author: true,
-          reactions: true,
-        },
-        orderBy: { createdAt: "desc" },
-        take: 20,
-      },
-    },
-  });
+  const user = await getProfileUser(slug);
   if (!user) notFound();
 
-  const [categories, groupedCategoryRanks, crew, titles, tldr] = await Promise.all([
-    prisma.category.findMany({ orderBy: { name: "asc" } }),
-    prisma.rating.groupBy({
-      by: ["categoryId"],
-      where: { rateeId: user.id },
-      _avg: { stars: true },
-      _count: { _all: true },
-    }),
-    getCrew(),
-    getTitlesForUser(user.id),
-    computeProfileTldr(user.id),
-  ]);
+  // Keep these sequential to avoid burst-connecting over low pool limits on serverless.
+  const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
+  const groupedCategoryRanks = await prisma.rating.groupBy({
+    by: ["categoryId"],
+    where: { rateeId: user.id },
+    _avg: { stars: true },
+    _count: { _all: true },
+  });
+  const crew = await getCrew();
+  const titles = await getTitlesForUser(user.id);
+  const tldr = await computeProfileTldr(user.id);
 
   const myVaultNote =
     session.userId !== user.id
