@@ -57,9 +57,10 @@ export default async function ComparePage({ searchParams }: Props) {
       _avg: { stars: true },
     });
 
-    type CompareUser = NonNullable<typeof userA>;
+    type CompareUser = (typeof allUsers)[number];
+    type OverallAgg = { _avg: { stars: number | null } };
 
-    function buildSide(u: CompareUser): CompareSide {
+    function buildSide(u: CompareUser, overall: OverallAgg): CompareSide {
       const perCategory: CompareSide["perCategory"] = {};
       for (const cat of categories) {
         const g = grouped.find((x) => x.categoryId === cat.id && x.rateeId === u.id);
@@ -68,7 +69,6 @@ export default async function ComparePage({ searchParams }: Props) {
           votes: g?._count._all ?? 0,
         };
       }
-      const overall = u.id === userA.id ? overallA : overallB;
       return {
         id: u.id,
         slug: u.slug,
@@ -79,8 +79,8 @@ export default async function ComparePage({ searchParams }: Props) {
       };
     }
 
-    sideA = buildSide(userA);
-    sideB = buildSide(userB);
+    sideA = buildSide(userA, overallA);
+    sideB = buildSide(userB, overallB);
   }
 
   return (
