@@ -67,7 +67,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      url: `/u/${user.slug}`,
+      url: `/u/${safeSlug}`,
       images: [{ url: ogUrl, width: 1200, height: 630 }],
     },
     twitter: {
