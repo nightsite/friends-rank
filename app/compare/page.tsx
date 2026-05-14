@@ -57,7 +57,9 @@ export default async function ComparePage({ searchParams }: Props) {
       _avg: { stars: true },
     });
 
-    function buildSide(u: typeof userA): CompareSide {
+    type CompareUser = NonNullable<typeof userA>;
+
+    function buildSide(u: CompareUser): CompareSide {
       const perCategory: CompareSide["perCategory"] = {};
       for (const cat of categories) {
         const g = grouped.find((x) => x.categoryId === cat.id && x.rateeId === u.id);
