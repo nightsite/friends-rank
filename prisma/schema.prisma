@@ -1,0 +1,327 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  displayName   String
+  avatarUrl     String?
+  bio           String?
+  bannerUrl     String?
+  bgImageUrl    String?
+  bgPreset      String?
+  bgBlur        Int      @default(0)
+  bgBrightness  Int      @default(100)
+  accentColor   String?
+  profileLayout String   @default("classic")
+  cardStyle     String   @default("glass")
+  pinnedPost    String?
+  favoriteTags  String?
+  pinHash       String
+  streakCount   Int      @default(0)
+  streakLastDay String?
+  lastSeenAt    DateTime?
+  mood          String?
+  xp            Int      @default(0)
+  level         Int      @default(1)
+  themeAudioUrl String?
+  ratingsGiven  Rating[] @relation("RatingsGiven")
+  ratingsRecv   Rating[] @relation("RatingsReceived")
+  profileRatingsGiven     ProfileRating[] @relation("ProfileRatingsGiven")
+  profileRatingsReceived  ProfileRating[] @relation("ProfileRatingsReceived")
+  followsGiven            Follow[]        @relation("FollowsGiven")
+  followsReceived         Follow[]        @relation("FollowsReceived")
+  profilePostsAuthored    ProfilePost[]   @relation("ProfilePostsAuthored")
+  profilePostsReceived    ProfilePost[]   @relation("ProfilePostsReceived")
+  profilePostReactions    ProfilePostReaction[]
+  notifications           AppNotification[]
+  inviteTokensCreated     InviteToken[]         @relation("InviteTokenCreatedBy")
+  inviteTokensRedeemed    InviteToken[]         @relation("InviteTokenRedeemedBy")
+  seasonalClaims          SeasonalEventClaim[]
+  rankPromotions          RankPromotion[]
+  achievements            Achievement[]
+  weeklyChampions         WeeklyChampion[]      @relation("WeeklyChampions")
+  dailyChallengeClaims    DailyChallengeClaim[]
+  vaultNotesOwned         VaultNote[]           @relation("VaultOwner")
+  vaultNotesAbout         VaultNote[]           @relation("VaultTarget")
+  reactions     Reaction[]
+  replies       Reply[]
+  pushSubs      WebPushSubscription[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  ratings   Rating[]
+  createdAt DateTime @default(now())
+}
+
+model Rating {
+  id         String   @id @default(cuid())
+  raterId    String
+  rateeId    String
+  categoryId String
+  stars      Int
+  comment    String   @default("")
+  reasons    String?
+  imageData  String?
+  imageMime  String?
+  audioData  String?
+  audioMime  String?
+  audioMs    Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  rater     User       @relation("RatingsGiven", fields: [raterId], references: [id], onDelete: Cascade)
+  ratee     User       @relation("RatingsReceived", fields: [rateeId], references: [id], onDelete: Cascade)
+  category  Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  reactions Reaction[]
+  replies   Reply[]
+
+  @@unique([raterId, rateeId, categoryId])
+  @@index([categoryId])
+  @@index([rateeId, categoryId])
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  ratingId  String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+
+  rating Rating @relation(fields: [ratingId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([ratingId, userId, emoji])
+  @@index([ratingId])
+}
+
+model Reply {
+  id        String   @id @default(cuid())
+  ratingId  String
+  authorId  String
+  body      String   @default("")
+  imageData String?
+  imageMime String?
+  audioData String?
+  audioMime String?
+  audioMs   Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rating Rating @relation(fields: [ratingId], references: [id], onDelete: Cascade)
+  author User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([ratingId])
+}
+
+model WebPushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ProfileRating {
+  id        String   @id @default(cuid())
+  raterId   String
+  rateeId   String
+  stars     Int
+  comment   String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rater User @relation("ProfileRatingsGiven", fields: [raterId], references: [id], onDelete: Cascade)
+  ratee User @relation("ProfileRatingsReceived", fields: [rateeId], references: [id], onDelete: Cascade)
+
+  @@unique([raterId, rateeId])
+  @@index([rateeId, updatedAt])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("FollowsGiven", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("FollowsReceived", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followingId, createdAt])
+}
+
+model ProfilePost {
+  id        String   @id @default(cuid())
+  authorId  String
+  targetId  String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author    User                  @relation("ProfilePostsAuthored", fields: [authorId], references: [id], onDelete: Cascade)
+  target    User                  @relation("ProfilePostsReceived", fields: [targetId], references: [id], onDelete: Cascade)
+  reactions ProfilePostReaction[]
+
+  @@index([targetId, createdAt])
+}
+
+model ProfilePostReaction {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+
+  post ProfilePost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId, emoji])
+  @@index([postId])
+}
+
+model AppNotification {
+  id          String   @id @default(cuid())
+  userId      String
+  kind        String
+  title       String
+  body        String
+  href        String?
+  readAt      DateTime?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model InviteToken {
+  id            String    @id @default(cuid())
+  token         String    @unique
+  note          String?
+  createdById   String
+  redeemedById  String?
+  redeemedAt    DateTime?
+  expiresAt     DateTime?
+  createdAt     DateTime  @default(now())
+
+  createdBy  User @relation("InviteTokenCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  redeemedBy User? @relation("InviteTokenRedeemedBy", fields: [redeemedById], references: [id], onDelete: SetNull)
+
+  @@index([createdById, createdAt])
+}
+
+model SeasonalEvent {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  description  String?
+  themePreset  String?
+  badgeLabel   String?
+  startsAt     DateTime
+  endsAt       DateTime
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  claims SeasonalEventClaim[]
+}
+
+model RankPromotion {
+  id         String   @id @default(cuid())
+  userId     String
+  scope      String
+  tier       String
+  rank       Int
+  notifiedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, scope])
+  @@index([userId])
+}
+
+model Achievement {
+  id         String   @id @default(cuid())
+  userId     String
+  slug       String
+  unlockedAt DateTime @default(now())
+  payload    String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slug])
+  @@index([userId, unlockedAt])
+}
+
+model WeeklyChampion {
+  id        String   @id @default(cuid())
+  userId    String
+  weekKey   String   @unique
+  score     Float
+  votes     Int
+  createdAt DateTime @default(now())
+
+  user User @relation("WeeklyChampions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model DailyChallengeClaim {
+  id            String   @id @default(cuid())
+  userId        String
+  dayKey        String
+  challengeKind String
+  completedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dayKey, challengeKind])
+  @@index([userId, completedAt])
+}
+
+model VaultNote {
+  id        String   @id @default(cuid())
+  ownerId   String
+  targetId  String
+  body      String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner  User @relation("VaultOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  target User @relation("VaultTarget", fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@unique([ownerId, targetId])
+  @@index([ownerId])
+  @@index([targetId])
+}
+
+model SeasonalEventClaim {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  reason    String?
+  createdAt DateTime @default(now())
+
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event SeasonalEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@index([eventId, createdAt])
+}
