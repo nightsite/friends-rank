@@ -1,8 +1,6 @@
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { getSessionOptions, type SessionData } from "./session-config";
-import { touchStreak } from "./streak";
-import { touchLastSeen } from "./presence";
 import { isAdminSession } from "./admin";
 
 export type AuthedSession = {
@@ -25,9 +23,6 @@ export async function requireSession(): Promise<AuthedSession | null> {
     if (!session.userId || !session.slug) {
       return null;
     }
-    // Bump streak once per UTC day + lastSeenAt throttled to 1/min. Non-fatal.
-    void touchStreak(session.userId).catch(() => {});
-    void touchLastSeen(session.userId).catch(() => {});
     return {
       userId: session.userId,
       slug: session.slug,
