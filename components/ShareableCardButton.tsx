@@ -18,22 +18,40 @@ export function ShareableCardButton({ slug, displayName }: Props) {
     setMsg(null);
     setBusy(true);
     try {
-      const res = await fetch(cardUrl);
-      if (!res.ok) throw new Error("card-fetch-failed");
+      const res = await fetch(cardUrl, {
+        credentials: "same-origin",
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        window.open(cardUrl, "_blank", "noopener,noreferrer");
+        setMsg(`Card wird direkt geöffnet (HTTP ${res.status}).`);
+        return;
+      }
       const blob = await res.blob();
+      if (!blob.type.startsWith("image/")) {
+        window.open(cardUrl, "_blank", "noopener,noreferrer");
+        setMsg("Card wird direkt geöffnet.");
+        return;
+      }
       const file = new File([blob], `${slug}-friends-rank.png`, { type: blob.type || "image/png" });
 
       const nav = navigator as Navigator & {
         canShare?: (data: ShareData) => boolean;
       };
       if (nav.share && nav.canShare?.({ files: [file] })) {
-        await nav.share({
-          files: [file],
-          title: `${displayName} on Friends Rank`,
-          text: `Check out ${displayName}'s Friends Rank profile.`,
-          url: profileUrl,
-        });
-        setMsg("Shared!");
+        try {
+          await nav.share({
+            files: [file],
+            title: `${displayName} on Friends Rank`,
+            text: `Check out ${displayName}'s Friends Rank profile.`,
+            url: profileUrl,
+          });
+          setMsg("Shared!");
+        } catch (err) {
+          const aborted =
+            err instanceof DOMException && err.name === "AbortError";
+          setMsg(aborted ? "Teilen abgebrochen." : "Teilen fehlgeschlagen.");
+        }
       } else {
         const objUrl = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -42,7 +60,7 @@ export function ShareableCardButton({ slug, displayName }: Props) {
         document.body.appendChild(a);
         a.click();
         a.remove();
-        URL.revokeObjectURL(objUrl);
+        setTimeout(() => URL.revokeObjectURL(objUrl), 1000);
         setMsg("Downloaded — drop it in your story.");
       }
     } catch {

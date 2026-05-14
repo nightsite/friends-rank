@@ -24,11 +24,20 @@
   }
 }
 
+html {
+  max-width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
 body {
   color: #fafafa;
   -webkit-tap-highlight-color: rgba(245, 158, 11, 0.15);
+  touch-action: pan-y;
   min-height: 100dvh;
+  max-width: 100%;
   overflow-x: hidden;
+  overscroll-behavior-x: none;
   background-color: var(--bg-deep);
   background-image:
     radial-gradient(ellipse 120% 80% at 50% -20%, var(--glow), transparent 55%),

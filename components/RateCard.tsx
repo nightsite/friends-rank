@@ -67,6 +67,7 @@ export function RateCard({
     setStatus("saving");
     const res = await fetch("/api/ratings", {
       method: "POST",
+      credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         rateeSlug,
@@ -99,7 +100,10 @@ export function RateCard({
     setDeleting(true);
     setError(null);
     try {
-      const res = await fetch(`/api/ratings/${initialRatingId}`, { method: "DELETE" });
+      const res = await fetch(`/api/ratings/${initialRatingId}`, {
+        method: "DELETE",
+        credentials: "same-origin",
+      });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
         setError(data.error ?? "Löschen fehlgeschlagen.");

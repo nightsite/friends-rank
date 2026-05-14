@@ -3,8 +3,11 @@ import bcrypt from "bcryptjs";
 import { getIronSession } from "iron-session";
 import { prisma } from "@/lib/prisma";
 import { USER_SLUGS } from "@/lib/constants";
-import { getSessionOptions } from "@/lib/session-config";
-import type { SessionData } from "@/lib/session-config";
+import {
+  compactAvatarForSession,
+  getSessionOptions,
+  type SessionData,
+} from "@/lib/session-config";
 import { rateLimitLogin } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -56,7 +59,7 @@ export async function POST(request: NextRequest) {
   session.userId = user.id;
   session.slug = user.slug;
   session.displayName = user.displayName;
-  session.avatarUrl = user.avatarUrl ?? undefined;
+  session.avatarUrl = compactAvatarForSession(user.avatarUrl);
   session.adminUserId = undefined;
   session.adminSlug = undefined;
   session.adminDisplayName = undefined;

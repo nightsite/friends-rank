@@ -14,7 +14,7 @@ import {
   normalizeThemeToken,
   validateNewPin,
 } from "@/lib/profile-validation";
-import { getSessionOptions, type SessionData } from "@/lib/session-config";
+import { getSessionOptions, compactAvatarForSession, type SessionData } from "@/lib/session-config";
 import { ANIME_PRESETS } from "@/lib/profile-presets";
 
 export const runtime = "nodejs";
@@ -256,7 +256,7 @@ export async function PATCH(request: NextRequest) {
   }
 
   session.displayName = fresh.displayName;
-  session.avatarUrl = fresh.avatarUrl ?? undefined;
+  session.avatarUrl = compactAvatarForSession(fresh.avatarUrl);
   await session.save();
 
   return NextResponse.json({ ok: true, pinChanged: Boolean(data.pinHash) });

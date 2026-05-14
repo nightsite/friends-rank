@@ -11,6 +11,12 @@ export type SessionData = {
   isImpersonating?: boolean;
 };
 
+/** iron-session rejects sealed cookies ~>4KB; skip huge avatar data URLs so save() keeps working. */
+export function compactAvatarForSession(url: string | null | undefined): string | undefined {
+  if (!url || url.length > 768) return undefined;
+  return url;
+}
+
 function getSessionPassword(): string {
   const p = process.env.SESSION_PASSWORD;
   if (!p || p.length < 32) {

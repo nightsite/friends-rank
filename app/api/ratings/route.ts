@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getIronSession } from "iron-session";
 import { prisma } from "@/lib/prisma";
-import {
-  CATEGORY_SLUGS,
-  COMMENT_MAX,
-  USER_SLUGS,
-} from "@/lib/constants";
+import { CATEGORY_SLUGS, COMMENT_MAX } from "@/lib/constants";
 import { getSessionOptions, type SessionData } from "@/lib/session-config";
 import { validateMediaDataUrl } from "@/lib/media-validation";
 import { notifyRated } from "@/lib/web-push";
@@ -55,11 +51,8 @@ export async function POST(request: NextRequest) {
   const rank = Number(body.rank ?? body.stars);
   const comment = String(body.comment ?? "").slice(0, COMMENT_MAX);
 
-  if (!USER_SLUGS.includes(rateeSlug as (typeof USER_SLUGS)[number])) {
-    return NextResponse.json({ error: "Invalid ratee" }, { status: 400 });
-  }
   if (rateeSlug === session.slug) {
-    return NextResponse.json({ error: "Cannot rate yourself" }, { status: 400 });
+    return NextResponse.json({ error: "Du kannst dich nicht selbst bewerten." }, { status: 400 });
   }
   if (
     !CATEGORY_SLUGS.includes(
@@ -69,7 +62,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid category" }, { status: 400 });
   }
   if (!Number.isInteger(rank) || rank < RANK_MIN || rank > RANK_MAX) {
-    return NextResponse.json({ error: `Rank must be ${RANK_MIN}–${RANK_MAX}` }, { status: 400 });
+    return NextResponse.json(
+      { error: `Rank muss zwischen ${RANK_MIN} und ${RANK_MAX} liegen.` },
+      { status: 400 },
+    );
   }
 
   let reasonsCsv: string | null = null;
@@ -117,7 +113,7 @@ export async function POST(request: NextRequest) {
   ]);
 
   if (!rater || !ratee || !category) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
   }
 
   await prisma.rating.upsert({

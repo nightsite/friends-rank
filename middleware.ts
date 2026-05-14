@@ -25,6 +25,9 @@ export async function middleware(request: NextRequest) {
   if (pathname === "/api/auth/login") {
     return NextResponse.next();
   }
+  if (pathname.startsWith("/api/og/profile")) {
+    return NextResponse.next();
+  }
 
   if (pathname === "/login") {
     if (session.userId) {
@@ -43,7 +46,7 @@ export async function middleware(request: NextRequest) {
   const needsAdmin = pathname === "/admin" || pathname.startsWith("/admin/") || pathname.startsWith("/api/admin/");
   if (needsAdmin && !isAdminSession(session)) {
     if (pathname.startsWith("/api/")) {
-      return NextResponse.json({ error: "Admin only." }, { status: 403 });
+      return NextResponse.json({ error: "Nur für Admins." }, { status: 403 });
     }
     return NextResponse.redirect(new URL("/", request.url));
   }

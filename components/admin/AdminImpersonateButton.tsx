@@ -17,12 +17,18 @@ export function AdminImpersonateButton({ slug, label }: Props) {
     try {
       const res = await fetch("/api/admin/impersonate", {
         method: "POST",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ slug }),
       });
       if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as { error?: string };
-        setError(data.error ?? "Konnte nicht wechseln.");
+        const ct = res.headers.get("content-type") ?? "";
+        let message: string | undefined;
+        if (ct.includes("application/json")) {
+          const data = (await res.json().catch(() => ({}))) as { error?: string };
+          message = data.error;
+        }
+        setError(message ?? `Konnte nicht wechseln (HTTP ${res.status}).`);
         return;
       }
       window.location.href = `/u/${slug}`;

@@ -66,7 +66,7 @@ export async function Header() {
                 <StopImpersonationButton />
               </div>
             ) : null}
-            <nav className="flex max-w-[100vw] flex-nowrap items-center gap-1 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] sm:max-w-none sm:pb-0 [&::-webkit-scrollbar]:hidden">
+            <nav className="flex max-w-full min-w-0 flex-nowrap items-center gap-1 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] sm:max-w-none sm:pb-0 [&::-webkit-scrollbar]:hidden overscroll-x-contain">
                   <NavLink href="/">Start</NavLink>
                   <NavLink href="/discover">Crew</NavLink>
                   <NavLink href="/compare">Vergleich</NavLink>

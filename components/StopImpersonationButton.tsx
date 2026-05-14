@@ -11,7 +11,10 @@ export function StopImpersonationButton() {
       className="!px-3 !py-1.5 text-xs"
       onClick={async () => {
         setBusy(true);
-        await fetch("/api/admin/impersonate/stop", { method: "POST" });
+        await fetch("/api/admin/impersonate/stop", {
+          method: "POST",
+          credentials: "same-origin",
+        });
         window.location.href = "/admin";
       }}
       disabled={busy}

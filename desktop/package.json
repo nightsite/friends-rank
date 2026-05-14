@@ -1,0 +1,26 @@
+{
+  "name": "friends-rank-desktop",
+  "version": "0.1.0",
+  "description": "Windows desktop shell for Friends Rank",
+  "author": "Friends Rank Team",
+  "private": true,
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:web\" \"npm:dev:electron\"",
+    "dev:web": "npm --prefix .. run dev",
+    "dev:electron": "wait-on http://localhost:3000/desktop && cross-env ELECTRON_START_URL=http://localhost:3000/desktop tsx src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false npm run build && electron-builder --win nsis portable"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.15",
+    "concurrently": "^9.2.1",
+    "cross-env": "^7.0.3",
+    "electron": "^33.3.1",
+    "electron-builder": "^26.0.20",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "wait-on": "^8.0.5"
+  }
+}

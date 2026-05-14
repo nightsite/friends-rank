@@ -1,0 +1,17 @@
+appId: com.friendsrank.desktop
+productName: Friends Rank
+directories:
+  output: release
+  buildResources: assets
+files:
+  - dist/**
+win:
+  signAndEditExecutable: false
+  verifyUpdateCodeSignature: false
+  target:
+    - nsis
+    - portable
+  artifactName: FriendsRank-${version}-${arch}.${ext}
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true

@@ -93,14 +93,12 @@ export function GlowUpChart({ ratings, className = "", weeks = 10 }: Props) {
 
   return (
     <div className={`space-y-3 ${className}`.trim()}>
-      <div className="overflow-x-auto">
-        <svg
-          viewBox={`0 0 ${W} ${H}`}
-          width="100%"
-          role="img"
-          aria-label="Weekly average per category"
-          className="block min-w-[420px]"
-        >
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        role="img"
+        aria-label="Weekly average per category"
+        className="block h-auto min-h-[120px] w-full max-w-full min-w-0"
+      >
           <defs>
             <pattern id="gridDots" x="0" y="0" width="32" height="32" patternUnits="userSpaceOnUse">
               <circle cx="0" cy="0" r="1" fill="rgba(255,255,255,0.06)" />
@@ -147,8 +145,7 @@ export function GlowUpChart({ ratings, className = "", weeks = 10 }: Props) {
               </g>
             );
           })}
-        </svg>
-      </div>
+      </svg>
       <ul className="flex flex-wrap items-center gap-3 text-xs text-zinc-400">
         {Array.from(series.entries()).map(([slug, s]) => (
           <li key={slug} className="inline-flex items-center gap-1.5">

@@ -119,6 +119,26 @@ When someone rates you, the server pings every active subscription (`Ömer rated
 
 7. **PIN reset:** set new values in env (`SEED_PIN_*` or `SEED_PIN_DEFAULT`) and run `npm run db:seed` again against that database (seed uses `upsert` and replaces `pinHash`). Alternatively update `pinHash` in Prisma Studio / SQL with a freshly generated bcrypt hash.
 
+## Windows desktop app (Electron)
+
+The website stays online; desktop app is an additional shell that loads `/desktop`.
+
+```bash
+npm run desktop:install
+npm run desktop:dev
+```
+
+Build Windows installer/portable artifacts:
+
+```bash
+npm run desktop:dist
+```
+
+Release and packaging details:
+
+- [`docs/windows-desktop-release.md`](docs/windows-desktop-release.md)
+- [`desktop/README.md`](desktop/README.md)
+
 ## Security notes
 
 - Use HTTPS in production (Vercel provides this).

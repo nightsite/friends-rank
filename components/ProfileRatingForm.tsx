@@ -33,6 +33,7 @@ export function ProfileRatingForm({ profileSlug, initialRatingId = null }: Props
     try {
       const res = await fetch("/api/profile-ratings", {
         method: "POST",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profileSlug, rank, comment }),
       });
@@ -56,7 +57,10 @@ export function ProfileRatingForm({ profileSlug, initialRatingId = null }: Props
     setMsg(null);
     setDeleting(true);
     try {
-      const res = await fetch(`/api/profile-ratings/${initialRatingId}`, { method: "DELETE" });
+      const res = await fetch(`/api/profile-ratings/${initialRatingId}`, {
+        method: "DELETE",
+        credentials: "same-origin",
+      });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
         setErr(data.error || "Profil-Rating konnte nicht gelöscht werden.");

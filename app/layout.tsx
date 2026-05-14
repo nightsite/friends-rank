@@ -124,7 +124,7 @@ export default async function RootLayout({
         <div className="ambient-orb ambient-orb-2" aria-hidden />
         <div className="ambient-orb ambient-orb-3" aria-hidden />
         {rankTier ? <div className="rank-glow" data-rank-tier={rankTier} aria-hidden /> : null}
-        <div className="relative z-[1] mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 pb-[max(5.5rem,env(safe-area-inset-bottom))] pt-5 sm:px-6 sm:pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:pt-6">
+        <div className="relative z-[1] mx-auto flex min-w-0 w-full max-w-4xl flex-1 flex-col px-4 pb-[max(5.5rem,env(safe-area-inset-bottom))] pt-5 sm:px-6 sm:pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:pt-6">
           <Header />
           {authedUserId ? <CrewStrip /> : null}
           <main className="mt-6 flex-1">
