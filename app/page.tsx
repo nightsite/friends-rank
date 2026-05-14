@@ -26,18 +26,18 @@ import { StreakLeaderboardCard } from "@/components/StreakLeaderboardCard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Friends Rank — Rate your crew. Level up together.",
+  title: "Friends Rank — Ranke deine Crew. Level up gemeinsam.",
   description:
-    "Rank your crew across Gym, Gaming, Face Card and Status. Climb the ladder from Bronze to Challenger.",
+    "Ranke deine Crew in Gym, Gaming, Face Card und Status. Klettere die Ladder von Bronze bis Challenger.",
   openGraph: {
     title: "Friends Rank",
-    description: "Rate your crew. Level up together.",
+    description: "Ranke deine Crew. Level up gemeinsam.",
     images: [{ url: "/api/og/profile", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Friends Rank",
-    description: "Rate your crew. Level up together.",
+    description: "Ranke deine Crew. Level up gemeinsam.",
     images: ["/api/og/profile"],
   },
 };
@@ -125,8 +125,8 @@ export default async function HomePage() {
   }));
 
   const lastLine = lastTouch
-    ? `Last movement: ${lastTouch.category.name} · ${formatRelative(lastTouch.updatedAt)}`
-    : "No ratings yet — you can be first.";
+    ? `Letzte Aktivität: ${lastTouch.category.name} · ${formatRelative(lastTouch.updatedAt)}`
+    : "Noch keine Ratings - du kannst der Erste sein.";
 
   const badges = computeBadges({ me, users: allUsers, ratings: allRatings, categories });
 
@@ -135,7 +135,7 @@ export default async function HomePage() {
   return (
     <PageShell
       title={`Hey, ${session.displayName}`}
-      description="Tap a friend to see their profile, or jump into a category to rank them."
+      description="Tippe auf einen Freund für sein Profil oder springe in eine Kategorie, um zu ranken."
     >
       <WeeklyChampionBanner viewerId={session.userId} />
       <DailyChallengeBanner userId={session.userId} />
@@ -145,7 +145,7 @@ export default async function HomePage() {
         <div className="flex flex-wrap items-end justify-between gap-2">
           <h2 className="font-display text-lg font-semibold text-white">Crew</h2>
           <Link href="/discover" className="text-xs font-medium text-amber-400/95 hover:text-amber-300">
-            Open full crew page →
+            Ganze Crew-Seite öffnen →
           </Link>
         </div>
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -188,7 +188,7 @@ export default async function HomePage() {
                     {u.avgRank ? (
                       <RankBadge value={u.avgRank} size="sm" />
                     ) : (
-                      <p className="text-[11px] text-zinc-500">Unranked</p>
+                      <p className="text-[11px] text-zinc-500">Noch ohne Rank</p>
                     )}
                   </Link>
                 </HoverProfileCard>
@@ -200,12 +200,12 @@ export default async function HomePage() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="glass-panel rounded-2xl border border-zinc-700/50 p-4 sm:col-span-1">
-          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Your progress</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Dein Fortschritt</p>
           <p className="mt-2 font-display text-3xl font-semibold text-white">
             {totalGiven}
             <span className="text-lg font-normal text-zinc-500">/{TOTAL_PAIRS}</span>
           </p>
-          <p className="mt-1 text-sm text-zinc-400">Ranks you&apos;ve given (all categories)</p>
+          <p className="mt-1 text-sm text-zinc-400">Von dir vergebene Ranks (alle Kategorien)</p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-200">
               🔥 {me.streakCount}-day streak
@@ -218,7 +218,7 @@ export default async function HomePage() {
           <BadgeStrip
             items={badges}
             className="mt-3"
-            emptyHint="Earn badges by giving honest ratings, holding streaks, or topping a leaderboard."
+            emptyHint="Verdiene Badges durch ehrliche Ratings, Streaks und Top-Platzierungen im Leaderboard."
           />
         </div>
       </div>
@@ -234,7 +234,7 @@ export default async function HomePage() {
             </span>
             <div className="min-w-0">
               <p className="text-xs font-medium uppercase tracking-wider text-amber-300">
-                Quote of the week
+                Quote der Woche
               </p>
               <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-zinc-100">
                 &ldquo;{digest.quote.body}&rdquo;
@@ -244,7 +244,7 @@ export default async function HomePage() {
               </p>
             </div>
             <span className="ml-auto whitespace-nowrap text-xs font-medium text-amber-400/95">
-              Open digest →
+              Digest öffnen →
             </span>
           </div>
         </Link>
@@ -255,7 +255,7 @@ export default async function HomePage() {
       <section className="space-y-3">
         <div className="flex items-end justify-between gap-2">
           <h2 className="font-display text-lg font-semibold text-white">Hall of fame</h2>
-          <span className="text-xs text-zinc-500">Top avg · min 1 vote</span>
+          <span className="text-xs text-zinc-500">Top-Durchschnitt · mind. 1 Vote</span>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {hallRows.map(({ category, leader }) => {
@@ -285,19 +285,19 @@ export default async function HomePage() {
                         <span className="mr-1 inline-flex align-middle">
                           <RankBadge value={leader.avg} size="sm" />
                         </span>
-                        avg · {leader.votes} vote
+                        Schnitt · {leader.votes} Vote
                         {leader.votes === 1 ? "" : "s"}
                       </p>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-zinc-500">No votes yet in this category.</p>
+                  <p className="text-sm text-zinc-500">Noch keine Votes in dieser Kategorie.</p>
                 )}
                 <Link
                   href={`/leaderboard/${category.slug}`}
                   className="mt-1 text-xs font-medium text-amber-400/90 hover:text-amber-300"
                 >
-                  Open leaderboard →
+                  Leaderboard öffnen →
                 </Link>
               </div>
             );
@@ -306,7 +306,7 @@ export default async function HomePage() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="font-display text-lg font-semibold text-white">Categories</h2>
+        <h2 className="font-display text-lg font-semibold text-white">Kategorien</h2>
         <ul className="grid gap-4 sm:grid-cols-2">
           {categories.map((c) => {
             const meta = CATEGORY_META[c.slug as CategorySlug];
@@ -324,7 +324,7 @@ export default async function HomePage() {
                         {meta.emoji}
                       </span>
                       <Badge tone={done === PEERS ? "emerald" : "neutral"}>
-                        {done}/{PEERS} rated
+                        {done}/{PEERS} bewertet
                       </Badge>
                     </div>
                     <h3 className="mt-4 font-display text-xl font-semibold text-white">{c.name}</h3>
@@ -336,7 +336,7 @@ export default async function HomePage() {
                       />
                     </div>
                     <span className="mt-3 inline-flex items-center text-sm font-medium text-amber-400/95 group-hover:text-amber-300">
-                      Rate & review
+                      Ranken & Feedback
                       <span className="ml-1 transition group-hover:translate-x-0.5" aria-hidden>
                         →
                       </span>
@@ -351,8 +351,8 @@ export default async function HomePage() {
 
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-2">
-          <h2 className="font-display text-lg font-semibold text-white">Recent activity</h2>
-          <span className="text-xs text-zinc-500">Who rated whom — no comment spoilers</span>
+          <h2 className="font-display text-lg font-semibold text-white">Letzte Aktivität</h2>
+          <span className="text-xs text-zinc-500">Wer wen gerankt hat - ohne Kommentar-Spoiler</span>
         </div>
         <RecentActivity items={activityItems} />
       </section>

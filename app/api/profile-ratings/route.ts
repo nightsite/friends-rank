@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
   const comment = String(body.comment ?? "").trim().slice(0, COMMENT_MAX);
 
   if (!profileSlug) {
-    return NextResponse.json({ error: "Target profile is missing." }, { status: 400 });
+    return NextResponse.json({ error: "Zielprofil fehlt." }, { status: 400 });
   }
   if (!Number.isInteger(rank) || rank < RANK_MIN || rank > RANK_MAX) {
     return NextResponse.json(
@@ -45,9 +45,9 @@ export async function POST(request: NextRequest) {
   }
 
   const ratee = await prisma.user.findUnique({ where: { slug: profileSlug } });
-  if (!ratee) return NextResponse.json({ error: "Profile not found." }, { status: 404 });
+  if (!ratee) return NextResponse.json({ error: "Profil nicht gefunden." }, { status: 404 });
   if (ratee.id === session.userId) {
-    return NextResponse.json({ error: "You can't rate your own profile." }, { status: 400 });
+    return NextResponse.json({ error: "Du kannst dein eigenes Profil nicht ranken." }, { status: 400 });
   }
 
   const existing = await prisma.profileRating.findUnique({
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     if (waitMs > 0) {
       const days = Math.ceil(waitMs / (24 * 60 * 60 * 1000));
       return NextResponse.json(
-        { error: `You can rate this profile again in ${days} day${days === 1 ? "" : "s"}.` },
+        { error: `Du kannst dieses Profil erst in ${days} Tag${days === 1 ? "" : "en"} erneut ranken.` },
         { status: 429 },
       );
     }
@@ -84,13 +84,13 @@ export async function POST(request: NextRequest) {
     void createAppNotification({
       userId: ratee.id,
       kind: "profile_rating_received",
-      title: `${rater.displayName} rated your profile`,
+      title: `${rater.displayName} hat dein Profil gerankt`,
       body: bodyText,
       href: `/u/${ratee.slug}`,
     }).catch(() => {});
     void notifyUser({
       userId: ratee.id,
-      title: `${rater.displayName} rated your profile`,
+      title: `${rater.displayName} hat dein Profil gerankt`,
       body: bodyText,
       url: `/u/${ratee.slug}`,
     }).catch(() => {});

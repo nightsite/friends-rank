@@ -27,15 +27,15 @@ export default async function EventsPage() {
 
   return (
     <PageShell
-      title="Seasonal events"
-      description="Join live events, claim badges, and track participation."
+      title="Seasonal-Events"
+      description="Nimm an Live-Events teil, claime Badges und verfolge deine Teilnahme."
       actions={<Link href="/admin" className="text-sm font-medium text-amber-300">Admin</Link>}
     >
       {events.length === 0 ? (
         <EmptyState
           variant="events"
-          title="No seasonal events yet"
-          hint="When admins launch a season, it shows up here with badges to claim."
+          title="Noch keine Seasonal-Events"
+          hint="Sobald Admins eine Season starten, erscheint sie hier mit claimbaren Badges."
         />
       ) : (
         <ul className="space-y-3">
@@ -52,7 +52,7 @@ export default async function EventsPage() {
                       </p>
                       {e.description ? <p className="mt-2 text-sm text-zinc-300">{e.description}</p> : null}
                       <p className="mt-2 text-xs text-zinc-500">
-                        {e.badgeLabel ? `Badge: ${e.badgeLabel}` : "Badge: Seasonal participant"} · claims{" "}
+                        {e.badgeLabel ? `Badge: ${e.badgeLabel}` : "Badge: Seasonal-Teilnahme"} · Claims{" "}
                         {e._count.claims}
                       </p>
                     </div>
@@ -64,7 +64,7 @@ export default async function EventsPage() {
                             : "border-zinc-700/70 text-zinc-400"
                         }`}
                       >
-                        {active ? "Active" : e.isActive ? "Scheduled/Expired" : "Disabled"}
+                        {active ? "Aktiv" : e.isActive ? "Geplant/Abgelaufen" : "Deaktiviert"}
                       </span>
                       {active ? (
                         <SeasonalClaimButton eventId={e.id} alreadyClaimed={e.claims.length > 0} />

@@ -22,21 +22,21 @@ export default async function InboxPage() {
   return (
     <PageShell
       title="Inbox"
-      description="All your in-app notifications. Keep up with follows, wall activity, and ratings."
+      description="Alle In-App-Notifications. Bleib bei Follows, Wall-Aktivität und Ratings auf dem Laufenden."
       actions={rows.length > 0 ? <NotificationActions mode="all" /> : undefined}
     >
       <Card hover={false} className="border-zinc-700/50">
         <p className="text-sm text-zinc-400">
-          {rows.length} total · <span className="text-amber-300">{unread} unread</span>
+          {rows.length} gesamt · <span className="text-amber-300">{unread} ungelesen</span>
         </p>
       </Card>
 
       {rows.length === 0 ? (
         <EmptyState
           variant="inbox"
-          title="Inbox is squeaky clean"
-          hint="You'll hear about new ratings, follows, wall posts, promotions, and challenges right here."
-          actionLabel="Rank someone"
+          title="Deine Inbox ist leer"
+          hint="Neue Ratings, Follows, Wall-Posts, Promotions und Challenges landen genau hier."
+          actionLabel="Jemanden ranken"
           actionHref="/"
         />
       ) : (
@@ -58,7 +58,7 @@ export default async function InboxPage() {
                       href={n.href}
                       className="inline-flex min-h-10 items-center rounded-lg border border-zinc-600/80 bg-zinc-950/50 px-3 py-1 text-xs text-zinc-200 hover:border-zinc-500"
                     >
-                      Open
+                      Öffnen
                     </Link>
                   ) : null}
                   {!n.readAt ? <NotificationActions mode="single" notificationId={n.id} /> : null}

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
   }
 
   const targetSlug = String(body.slug ?? "").trim().toLowerCase();
-  if (!targetSlug) return NextResponse.json({ error: "Target slug missing." }, { status: 400 });
+  if (!targetSlug) return NextResponse.json({ error: "Ziel-Slug fehlt." }, { status: 400 });
   const target = await prisma.user.findUnique({ where: { slug: targetSlug } });
   if (!target) return NextResponse.json({ error: "User not found." }, { status: 404 });
 

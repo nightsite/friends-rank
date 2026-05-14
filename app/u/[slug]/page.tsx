@@ -168,9 +168,9 @@ export default async function PublicProfilePage({ params }: Props) {
 
   return (
     <PageShell
-      title={`${user.displayName}'s profile`}
-      description="Public profile with custom visuals, bio, tags, and profile ratings."
-      actions={<Link href="/" className="text-sm font-medium text-amber-300">Home</Link>}
+      title={`Profil von ${user.displayName}`}
+      description="Öffentliches Profil mit Visuals, Bio, Tags und Profil-Ratings."
+      actions={<Link href="/" className="text-sm font-medium text-amber-300">Start</Link>}
     >
       <SwipeProfileNav prev={prev} next={next} />
       <Card hover={false} className={`overflow-hidden ${cardTone}`}>
@@ -304,7 +304,7 @@ export default async function PublicProfilePage({ params }: Props) {
                 </ul>
               ) : null}
               <p className="mt-2 text-[10px] uppercase tracking-widest text-zinc-500">
-                Auto-summary · {tldr.ratingsCount} ratings analyzed
+                Auto-Zusammenfassung · {tldr.ratingsCount} Ratings analysiert
               </p>
             </div>
           </div>
@@ -313,11 +313,9 @@ export default async function PublicProfilePage({ params }: Props) {
 
       {session.userId !== user.id ? (
         <Card hover={false} className="border-amber-500/30">
-          <h3 className="font-display text-lg font-semibold text-white">
-            🔒 Your private vault notes
-          </h3>
+          <h3 className="font-display text-lg font-semibold text-white">🔒 Deine privaten Vault-Notizen</h3>
           <p className="mt-1 text-xs text-zinc-500">
-            Only visible to you. Auto-saves while you type.
+            Nur für dich sichtbar. Speichert automatisch beim Tippen.
           </p>
           <div className="mt-3">
             <VaultNotePad
@@ -331,14 +329,14 @@ export default async function PublicProfilePage({ params }: Props) {
 
       <div className={`grid gap-4 ${canRate ? "lg:grid-cols-2" : "grid-cols-1"}`}>
         <Card hover={false} className="border-zinc-700/50">
-          <p className="text-xs uppercase tracking-widest text-zinc-500">Profile score</p>
+          <p className="text-xs uppercase tracking-widest text-zinc-500">Profil-Score</p>
           <div className="mt-2">{avg ? <RankBadge value={avg} size="lg" /> : <span className="text-zinc-500">--</span>}</div>
           <p className="text-sm text-zinc-400">
-            {user.profileRatingsReceived.length} vote{user.profileRatingsReceived.length === 1 ? "" : "s"}
+            {user.profileRatingsReceived.length} Vote{user.profileRatingsReceived.length === 1 ? "" : "s"}
           </p>
           <p className="mt-2 text-xs text-zinc-500">
-            {user.followsReceived.length} follower{user.followsReceived.length === 1 ? "" : "s"} ·{" "}
-            {user.followsGiven.length} following
+            {user.followsReceived.length} Follower{user.followsReceived.length === 1 ? "" : "s"} ·{" "}
+            {user.followsGiven.length} Following
           </p>
           {session.userId !== user.id ? (
             <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -347,16 +345,16 @@ export default async function PublicProfilePage({ params }: Props) {
                 href={`/compare?a=me&b=${user.slug}`}
                 className="inline-flex min-h-9 items-center justify-center rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-200 hover:bg-amber-500/20"
               >
-                Compare with me ↔
+                Mit mir vergleichen ↔
               </Link>
             </div>
           ) : null}
         </Card>
         {canRate ? (
           <Card hover={false} className="border-zinc-700/50">
-            <h3 className="font-display text-lg font-semibold text-white">Rank this profile</h3>
+            <h3 className="font-display text-lg font-semibold text-white">Dieses Profil ranken</h3>
             <p className="mt-1 text-xs text-zinc-500">
-              You can submit one rank per profile every 7 days.
+              Du kannst alle 7 Tage genau einen Rank für dieses Profil abgeben.
             </p>
             <div className="mt-3">
               <ProfileRatingForm profileSlug={user.slug} initialRatingId={myProfileRating?.id ?? null} />
@@ -366,14 +364,14 @@ export default async function PublicProfilePage({ params }: Props) {
       </div>
 
       <Card hover={false} className="border-zinc-700/50">
-        <h3 className="font-display text-lg font-semibold text-white">Category ranks</h3>
-        <p className="mt-1 text-xs text-zinc-500">How this profile performs per category.</p>
+        <h3 className="font-display text-lg font-semibold text-white">Kategorie-Ranks</h3>
+        <p className="mt-1 text-xs text-zinc-500">So performt dieses Profil pro Kategorie.</p>
         {categoryRanks.length === 0 ? (
           <div className="mt-3">
             <EmptyState
               variant="ratings"
-              title="No category ranks yet"
-              hint="Once friends rank this profile in a category, it'll show up here."
+              title="Noch keine Kategorie-Ranks"
+              hint="Sobald Freunde dieses Profil in einer Kategorie ranken, erscheint es hier."
             />
           </div>
         ) : (
@@ -387,7 +385,7 @@ export default async function PublicProfilePage({ params }: Props) {
                   <RankBadge value={row.avgRank} size="sm" />
                 </div>
                 <p className="mt-1 text-xs text-zinc-500">
-                  {row.votes} vote{row.votes === 1 ? "" : "s"}
+                  {row.votes} Vote{row.votes === 1 ? "" : "s"}
                 </p>
               </li>
             ))}
@@ -397,7 +395,7 @@ export default async function PublicProfilePage({ params }: Props) {
 
       <Card hover={false} className="border-zinc-700/50">
         <h3 className="font-display text-lg font-semibold text-white">Wall</h3>
-        <p className="mt-1 text-xs text-zinc-500">Leave comments on this profile and react to posts.</p>
+        <p className="mt-1 text-xs text-zinc-500">Hinterlasse Kommentare auf dem Profil und reagiere auf Posts.</p>
         <div className="mt-4">
           <ProfileWall
             targetSlug={user.slug}
@@ -420,9 +418,9 @@ export default async function PublicProfilePage({ params }: Props) {
       </Card>
 
       <Card hover={false} className="border-zinc-700/50">
-        <h3 className="font-display text-lg font-semibold text-white">Latest profile feedback</h3>
+        <h3 className="font-display text-lg font-semibold text-white">Neuestes Profil-Feedback</h3>
         {user.profileRatingsReceived.length === 0 ? (
-          <p className="mt-2 text-sm text-zinc-500">No profile ratings yet.</p>
+          <p className="mt-2 text-sm text-zinc-500">Noch keine Profil-Ratings.</p>
         ) : (
           <ul className="mt-4 space-y-3">
             {user.profileRatingsReceived.map((r) => (
@@ -442,7 +440,7 @@ export default async function PublicProfilePage({ params }: Props) {
                 {r.comment ? (
                   <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-200">{r.comment}</p>
                 ) : (
-                  <p className="mt-2 text-sm italic text-zinc-500">No written comment.</p>
+                  <p className="mt-2 text-sm italic text-zinc-500">Kein geschriebener Kommentar.</p>
                 )}
               </li>
             ))}
@@ -451,17 +449,17 @@ export default async function PublicProfilePage({ params }: Props) {
       </Card>
 
       <Card hover={false} className="border-zinc-700/50">
-        <h3 className="font-display text-lg font-semibold text-white">Recent timeline</h3>
+        <h3 className="font-display text-lg font-semibold text-white">Letzte Timeline</h3>
         <ul className="mt-3 space-y-2 text-sm text-zinc-300">
           {user.profilePostsReceived.slice(0, 5).map((post) => (
             <li key={`p-${post.id}`} className="rounded-lg border border-zinc-800/70 bg-zinc-950/40 px-3 py-2">
-              <span className="font-medium text-zinc-100">{post.author.displayName}</span> posted on wall ·{" "}
+              <span className="font-medium text-zinc-100">{post.author.displayName}</span> hat auf der Wall gepostet ·{" "}
               <span className="text-zinc-500">{formatRelative(new Date(post.createdAt))}</span>
             </li>
           ))}
           {user.profileRatingsReceived.slice(0, 5).map((r) => (
             <li key={`r-${r.id}`} className="rounded-lg border border-zinc-800/70 bg-zinc-950/40 px-3 py-2">
-              <span className="font-medium text-zinc-100">{r.rater.displayName}</span> rated profile{" "}
+              <span className="font-medium text-zinc-100">{r.rater.displayName}</span> hat das Profil gerankt{" "}
               <RankBadge value={r.stars} size="sm" className="mx-1 align-middle" /> ·{" "}
               <span className="text-zinc-500">{formatRelative(new Date(r.updatedAt))}</span>
             </li>

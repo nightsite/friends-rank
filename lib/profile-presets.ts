@@ -19,9 +19,9 @@ export const ANIME_PRESETS: AnimePreset[] = [
   },
   {
     id: "neon-street",
-    label: "Arcade",
+    label: "Black Moon",
     imageUrl:
-      "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80",
+      "https://giffiles.alphacoders.com/221/221624.gif",
   },
   {
     id: "rainy-window",

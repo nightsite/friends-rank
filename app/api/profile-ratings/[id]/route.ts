@@ -14,10 +14,10 @@ export async function DELETE(_request: NextRequest, { params }: Props) {
 
   const { id } = await params;
   const rating = await prisma.profileRating.findUnique({ where: { id } });
-  if (!rating) return NextResponse.json({ error: "Profile rating not found." }, { status: 404 });
+  if (!rating) return NextResponse.json({ error: "Profil-Rating nicht gefunden." }, { status: 404 });
 
   if (!session.isAdmin && rating.raterId !== session.userId) {
-    return NextResponse.json({ error: "You can only delete your own rating." }, { status: 403 });
+    return NextResponse.json({ error: "Du kannst nur dein eigenes Profil-Rating löschen." }, { status: 403 });
   }
 
   await prisma.profileRating.delete({ where: { id } });

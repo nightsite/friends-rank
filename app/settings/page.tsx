@@ -16,8 +16,8 @@ export default async function SettingsPage() {
 
   return (
     <PageShell
-      title="Settings"
-      description="Update your photo, display name, bio, notifications, and sign-in PIN."
+      title="Einstellungen"
+      description="Passe Foto, Anzeigename, Bio, Notifications und deine Login-PIN an."
     >
       <SettingsForm
         initialDisplayName={user.displayName}

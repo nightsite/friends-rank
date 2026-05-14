@@ -11,18 +11,18 @@ type Step = {
 const STEPS: Step[] = [
   {
     emoji: "👋",
-    title: "Welcome to Friends Rank",
-    body: "Rank your crew across Gym, Gaming, Face Card and Status. Every rating sends a private signal — keep it honest, keep it spicy.",
+    title: "Willkommen bei Friends Rank",
+    body: "Ranke deine Crew in Gym, Gaming, Face Card und Status. Jedes Rating sendet ein klares Signal - ehrlich und direkt.",
   },
   {
     emoji: "🎮",
-    title: "Climb the ladder",
-    body: "Earn XP for every rating, unlock hidden achievements, hold streaks, and climb from Bronze to Challenger. Hit the top of a category and pick up a Title.",
+    title: "Klettere die Ladder hoch",
+    body: "Sammle XP für jedes Rating, unlocke hidden achievements, halte Streaks und steigere dich von Bronze bis Challenger. Platz 1 in einer Kategorie bringt dir einen Title.",
   },
   {
     emoji: "✨",
-    title: "Make it yours",
-    body: "Drop a profile pic or GIF, set your mood, pick a theme song, and leave private vault notes about each friend. Settings → unlock the looks.",
+    title: "Mach es zu deinem Profil",
+    body: "Lade ein Profilbild oder GIF hoch, setze deinen Mood, wähle einen Theme-Song und schreibe private Vault-Notizen über jeden Freund. In den Einstellungen findest du alle Visuals.",
   },
 ];
 
@@ -72,7 +72,7 @@ export function OnboardingTour() {
             onClick={dismiss}
             className="text-xs text-zinc-500 underline-offset-2 hover:text-zinc-300 hover:underline"
           >
-            Skip
+            Überspringen
           </button>
           <div className="flex items-center gap-2">
             {idx > 0 ? (
@@ -81,7 +81,7 @@ export function OnboardingTour() {
                 onClick={() => setIdx((i) => Math.max(0, i - 1))}
                 className="min-h-10 rounded-xl border border-zinc-700/70 bg-zinc-900/60 px-3 text-xs font-semibold text-zinc-200"
               >
-                Back
+                Zurück
               </button>
             ) : null}
             <button
@@ -89,7 +89,7 @@ export function OnboardingTour() {
               onClick={() => (last ? dismiss() : setIdx((i) => i + 1))}
               className="min-h-10 rounded-xl bg-gradient-to-b from-amber-300 to-amber-500 px-4 text-xs font-semibold text-zinc-950 shadow"
             >
-              {last ? "Let's go" : "Next"}
+              {last ? "Los geht's" : "Weiter"}
             </button>
           </div>
         </div>

@@ -44,7 +44,7 @@ export function EnableNotifications({ vapidPublicKey, className = "" }: Props) {
     setMsg(null);
     if (!vapidPublicKey) {
       setErr(
-        "Push notifications are not configured on the server (missing VAPID keys). See README.",
+        "Push-Notifications sind auf dem Server nicht konfiguriert (fehlende VAPID-Keys). Siehe README.",
       );
       return;
     }
@@ -53,7 +53,7 @@ export function EnableNotifications({ vapidPublicKey, className = "" }: Props) {
       const perm = await Notification.requestPermission();
       setPermission(perm);
       if (perm !== "granted") {
-        setErr("Permission was not granted.");
+        setErr("Berechtigung wurde nicht erteilt.");
         return;
       }
       const reg = await navigator.serviceWorker.ready;
@@ -68,13 +68,13 @@ export function EnableNotifications({ vapidPublicKey, className = "" }: Props) {
         body: JSON.stringify(json),
       });
       if (!res.ok) {
-        setErr("Could not save subscription on server.");
+        setErr("Subscription konnte auf dem Server nicht gespeichert werden.");
         return;
       }
       setSubscribed(true);
-      setMsg("Notifications enabled. We'll ping you when someone rates you.");
+      setMsg("Notifications aktiviert. Wir geben dir Bescheid, wenn dich jemand bewertet.");
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Could not enable notifications.");
+      setErr(e instanceof Error ? e.message : "Notifications konnten nicht aktiviert werden.");
     } finally {
       setBusy(false);
     }
@@ -96,9 +96,9 @@ export function EnableNotifications({ vapidPublicKey, className = "" }: Props) {
         await sub.unsubscribe();
       }
       setSubscribed(false);
-      setMsg("Notifications turned off.");
+      setMsg("Notifications ausgeschaltet.");
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Could not disable notifications.");
+      setErr(e instanceof Error ? e.message : "Notifications konnten nicht deaktiviert werden.");
     } finally {
       setBusy(false);
     }
@@ -107,7 +107,7 @@ export function EnableNotifications({ vapidPublicKey, className = "" }: Props) {
   if (!supported) {
     return (
       <p className={`text-sm text-zinc-500 ${className}`.trim()}>
-        Your browser doesn&apos;t support push notifications.
+        Dein Browser unterstützt keine Push-Notifications.
       </p>
     );
   }
@@ -116,16 +116,16 @@ export function EnableNotifications({ vapidPublicKey, className = "" }: Props) {
     <div className={`space-y-3 ${className}`.trim()}>
       <p className="text-xs text-zinc-500">
         Status: <span className="text-zinc-300">{permission}</span> ·{" "}
-        {subscribed ? "subscribed" : "not subscribed"}
+        {subscribed ? "abonniert" : "nicht abonniert"}
       </p>
       <div className="flex flex-wrap items-center gap-2">
         {!subscribed ? (
           <Button onClick={enable} disabled={busy}>
-            {busy ? "Enabling…" : "Enable notifications"}
+            {busy ? "Aktiviere…" : "Notifications aktivieren"}
           </Button>
         ) : (
           <Button variant="ghost" onClick={disable} disabled={busy}>
-            {busy ? "Turning off…" : "Turn off notifications"}
+            {busy ? "Deaktiviere…" : "Notifications ausschalten"}
           </Button>
         )}
       </div>

@@ -78,15 +78,15 @@ export default async function MePage() {
 
   return (
     <PageShell
-      title={`Feedback for ${session.displayName}`}
-      description="What the crew said across categories. Timestamps show when reviews were last updated — use it as fuel, not a verdict."
+      title={`Feedback für ${session.displayName}`}
+      description="Was die Crew über dich in den Kategorien sagt. Zeitstempel zeigen Updates - nutze es als Push, nicht als Urteil."
     >
       {newTopRankId ? <ConfettiOnNewFive ratingId={newTopRankId} cookieName="lastSeenTopRankId" /> : null}
       <Card hover={false} className="border-zinc-700/50">
         <div className="flex flex-wrap items-start gap-4">
           <Avatar name={me.displayName} url={me.avatarUrl} size="lg" />
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">You</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Du</p>
             <p className="font-display text-xl font-semibold text-white">{me.displayName}</p>
             {me.bio ? (
               <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-zinc-300">
@@ -96,7 +96,7 @@ export default async function MePage() {
               <p className="mt-2 text-sm italic text-zinc-500">
                 No bio yet.{" "}
                 <Link href="/settings" className="text-amber-400 hover:text-amber-300">
-                  Add one in Settings →
+                  In Einstellungen hinzufügen →
                 </Link>
               </p>
             )}
@@ -105,7 +105,7 @@ export default async function MePage() {
                 🔥 {me.streakCount}-day streak
               </span>
               <span className="text-xs text-zinc-500">
-                {me.streakLastDay ? `Last active ${me.streakLastDay}` : "Sign in tomorrow to keep it alive"}
+                {me.streakLastDay ? `Zuletzt aktiv ${me.streakLastDay}` : "Melde dich morgen an, um die Streak zu halten"}
               </span>
             </div>
             <LevelXpBar xp={me.xp} className="mt-4 max-w-sm" />
@@ -133,7 +133,7 @@ export default async function MePage() {
           <div>
             <h2 className="font-display text-lg font-semibold text-white">Achievements</h2>
             <p className="text-xs text-zinc-500">
-              {achievements.length}/{Object.keys(ACHIEVEMENTS).length} unlocked — some are hidden until you trigger them.
+              {achievements.length}/{Object.keys(ACHIEVEMENTS).length} unlocked - einige bleiben hidden, bis du sie triggerst.
             </p>
           </div>
         </div>
@@ -166,7 +166,7 @@ export default async function MePage() {
                         unlocked ? "text-zinc-300" : "text-zinc-600"
                       }`}
                     >
-                      {unlocked ? def.description : "Unlock condition is hidden — trigger it in the wild."}
+                      {unlocked ? def.description : "Unlock-Bedingung ist hidden - triggere sie im Spiel."}
                     </p>
                     {unlocked ? (
                       <p className="mt-1 text-[10px] uppercase tracking-widest text-amber-300/80">
@@ -184,16 +184,16 @@ export default async function MePage() {
       <Card hover={false} className="border-zinc-700/50">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
-            <h2 className="font-display text-lg font-semibold text-white">Your glow-up</h2>
+            <h2 className="font-display text-lg font-semibold text-white">Dein Glow-up</h2>
             <p className="text-xs text-zinc-500">
-              Weekly average per category, last ~10 weeks. Climbing line = good.
+              Wöchentlicher Schnitt pro Kategorie, letzte ~10 Wochen. Steigende Linie = gut.
             </p>
           </div>
           <Link
             href="/digest"
             className="text-xs font-medium text-amber-400/95 hover:text-amber-300"
           >
-            Weekly digest →
+            Weekly Digest →
           </Link>
         </div>
         <GlowUpChart
@@ -208,10 +208,10 @@ export default async function MePage() {
       </Card>
 
       <Card hover={false} className="border-zinc-700/50">
-        <h2 className="font-display text-lg font-semibold text-white">Your category ranks</h2>
-        <p className="mt-1 text-xs text-zinc-500">Average rank by category from received feedback.</p>
+        <h2 className="font-display text-lg font-semibold text-white">Deine Kategorie-Ranks</h2>
+        <p className="mt-1 text-xs text-zinc-500">Durchschnittlicher Rank pro Kategorie aus erhaltenem Feedback.</p>
         {ratings.length === 0 ? (
-          <p className="mt-3 text-sm text-zinc-500">No category ranks yet.</p>
+          <p className="mt-3 text-sm text-zinc-500">Noch keine Kategorie-Ranks.</p>
         ) : (
           <ul className="mt-4 grid gap-2 sm:grid-cols-2">
             {categories.map((cat) => {
@@ -225,7 +225,7 @@ export default async function MePage() {
                     <RankBadge value={avg} size="sm" />
                   </div>
                   <p className="mt-1 text-xs text-zinc-500">
-                    {list.length} vote{list.length === 1 ? "" : "s"}
+                    {list.length} Vote{list.length === 1 ? "" : "s"}
                   </p>
                 </li>
               );
@@ -237,9 +237,9 @@ export default async function MePage() {
       {ratings.length === 0 ? (
         <EmptyState
           variant="ratings"
-          title="No feedback yet"
-          hint="Once people rate you, their ranks and comments show up here with timestamps."
-          actionLabel="Go rate the squad →"
+          title="Noch kein Feedback"
+          hint="Sobald dich Leute ranken, erscheinen hier Ranks und Kommentare mit Zeitstempeln."
+          actionLabel="Crew ranken →"
           actionHref="/"
         />
       ) : (
@@ -253,7 +253,7 @@ export default async function MePage() {
                   <h2 className="font-display text-xl font-semibold text-white">{cat.name}</h2>
                   <div className="flex items-center gap-2">
                     <Badge tone="violet">
-                      {list.length} review{list.length === 1 ? "" : "s"}
+                      {list.length} Review{list.length === 1 ? "" : "s"}
                     </Badge>
                     <Link
                       href={`/leaderboard/${cat.slug}`}
@@ -289,7 +289,7 @@ export default async function MePage() {
                           <div className="flex flex-wrap items-start gap-3">
                             <Avatar name={r.rater.displayName} url={r.rater.avatarUrl} size="md" />
                             <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium text-zinc-400">From</p>
+                              <p className="text-sm font-medium text-zinc-400">Von</p>
                               <Link
                                 href={`/u/${r.rater.slug}`}
                                 className="font-display text-lg font-semibold text-white hover:text-amber-300"
@@ -314,7 +314,7 @@ export default async function MePage() {
                               {r.comment}
                             </p>
                           ) : (
-                            <p className="mt-4 text-sm italic text-zinc-500">No written comment.</p>
+                            <p className="mt-4 text-sm italic text-zinc-500">Kein geschriebener Kommentar.</p>
                           )}
                           <ReasonTagsDisplay reasons={r.reasons} className="mt-3" />
                           {r.imageData ? (

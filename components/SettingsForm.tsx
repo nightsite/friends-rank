@@ -127,7 +127,7 @@ export function SettingsForm({
       });
       setAvatarValue(out.dataUrl);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Could not read that image.";
+      const msg = err instanceof Error ? err.message : "Bild konnte nicht gelesen werden.";
       setPickError(msg);
     } finally {
       if (fileRef.current) fileRef.current.value = "";
@@ -153,7 +153,7 @@ export function SettingsForm({
       setBgImageUrl(out.dataUrl);
       setBgPreset("");
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Could not read that background image.";
+      const msg = err instanceof Error ? err.message : "Hintergrundbild konnte nicht gelesen werden.";
       setPickError(msg);
     } finally {
       if (bgFileRef.current) bgFileRef.current.value = "";
@@ -189,7 +189,7 @@ export function SettingsForm({
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
-        setProfileErr(data.error || "Could not save profile");
+        setProfileErr(data.error || "Profil konnte nicht gespeichert werden.");
         return;
       }
       setProfileMsg("Profile saved.");
@@ -204,11 +204,11 @@ export function SettingsForm({
     setPinErr(null);
     setPinMsg(null);
     if (newPin.length < 6) {
-      setPinErr("New PIN must be at least 6 characters.");
+      setPinErr("Neue PIN muss mindestens 6 Zeichen lang sein.");
       return;
     }
     if (newPin !== confirmPin) {
-      setPinErr("New PIN and confirmation must match.");
+      setPinErr("Neue PIN und Bestätigung müssen übereinstimmen.");
       return;
     }
     setPinLoading(true);
@@ -223,7 +223,7 @@ export function SettingsForm({
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
-        setPinErr(data.error || "Could not change PIN");
+        setPinErr(data.error || "PIN konnte nicht geändert werden.");
         return;
       }
       setPinMsg("PIN updated. Stay logged in — your session was refreshed.");
@@ -243,10 +243,9 @@ export function SettingsForm({
   return (
     <div className="space-y-8">
       <Card hover={false} className="border-zinc-700/50">
-        <h2 className="font-display text-xl font-semibold text-white">Profile</h2>
+        <h2 className="font-display text-xl font-semibold text-white">Profil</h2>
         <p className="mt-1 text-sm text-zinc-400">
-          Upload a photo or GIF straight from your phone or PC. GIFs animate everywhere they show
-          up.
+          Lade ein Foto oder GIF direkt vom Handy oder PC hoch. GIFs bleiben überall animiert.
         </p>
         <form onSubmit={saveProfile} className="mt-6 space-y-5">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
@@ -257,7 +256,7 @@ export function SettingsForm({
                   className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-gradient-to-b from-amber-300 to-amber-500 px-4 py-2.5 text-sm font-semibold text-zinc-950 shadow-lg shadow-amber-900/25 hover:from-amber-200 hover:to-amber-400"
                   htmlFor="avatar-file"
                 >
-                  Upload photo or GIF
+                  Foto oder GIF hochladen
                   <input
                     id="avatar-file"
                     ref={fileRef}
@@ -270,7 +269,7 @@ export function SettingsForm({
                 </label>
                 {avatarValue ? (
                   <Button variant="ghost" type="button" onClick={clearPhoto}>
-                    Remove
+                    Entfernen
                   </Button>
                 ) : null}
                 <button
@@ -278,16 +277,16 @@ export function SettingsForm({
                   onClick={() => setShowUrlInput((v) => !v)}
                   className="text-xs font-medium text-zinc-500 underline-offset-2 hover:text-zinc-300 hover:underline"
                 >
-                  {showUrlInput ? "Hide URL field" : "Or paste URL"}
+                  {showUrlInput ? "URL-Feld ausblenden" : "Oder URL einfügen"}
                 </button>
               </div>
               <p className="text-xs text-zinc-500">
-                Stills are auto-cropped to a square and shrunk to 512px. Animated GIFs (≤2 MB) are
-                stored as-is and play wherever your avatar appears.
+                Standbilder werden automatisch quadratisch gecroppt und auf 512px verkleinert.
+                Animierte GIFs (≤2 MB) werden unverändert gespeichert und überall abgespielt, wo dein Avatar erscheint.
               </p>
               {isData ? (
                 <p className="text-[11px] text-zinc-500">
-                  Stored size: ~{Math.round(avatarValue.length / 1024)} KB
+                  Gespeicherte Größe: ~{Math.round(avatarValue.length / 1024)} KB
                 </p>
               ) : null}
               {pickError ? (
@@ -300,7 +299,7 @@ export function SettingsForm({
 
           {showUrlInput ? (
             <label className="block text-sm font-medium text-zinc-300">
-              Image URL (advanced)
+              Bild-URL (fortgeschritten)
               <input
                 className="mt-2 min-h-12 w-full rounded-xl border border-zinc-600/80 bg-zinc-950/70 px-4 py-3 text-base text-white shadow-inner shadow-black/20 focus:border-amber-500/45 focus:ring-2 focus:ring-amber-500/20"
                 value={isData ? "" : avatarValue}
@@ -313,7 +312,7 @@ export function SettingsForm({
           ) : null}
 
           <label className="block text-sm font-medium text-zinc-300">
-            Display name
+            Anzeigename
             <input
               className="mt-2 min-h-12 w-full rounded-xl border border-zinc-600/80 bg-zinc-950/70 px-4 py-3 text-base text-white shadow-inner shadow-black/20 focus:border-amber-500/45 focus:ring-2 focus:ring-amber-500/20"
               value={displayName}
@@ -331,7 +330,7 @@ export function SettingsForm({
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               maxLength={BIO_MAX}
-              placeholder="Fav game, lift, song, current arc…"
+              placeholder="Lieblingsspiel, Gym-Fokus, Song, aktueller Vibe…"
             />
             <span className="mt-1 block text-right text-[11px] text-zinc-500">
               {bio.length}/{BIO_MAX}
@@ -339,7 +338,7 @@ export function SettingsForm({
           </label>
 
           <label className="block text-sm font-medium text-zinc-300">
-            Mood (short status)
+            Mood (Kurzstatus)
             <input
               className="mt-2 min-h-12 w-full rounded-xl border border-zinc-600/80 bg-zinc-950/70 px-4 py-3 text-base text-white shadow-inner shadow-black/20 focus:border-amber-500/45 focus:ring-2 focus:ring-amber-500/20"
               value={mood}
@@ -353,7 +352,7 @@ export function SettingsForm({
           </label>
 
           <label className="block text-sm font-medium text-zinc-300">
-            Theme song URL (optional)
+            Theme-Song URL (optional)
             <input
               className="mt-2 min-h-12 w-full rounded-xl border border-zinc-600/80 bg-zinc-950/70 px-4 py-3 text-base text-white shadow-inner shadow-black/20 focus:border-amber-500/45 focus:ring-2 focus:ring-amber-500/20"
               value={themeAudioUrl}
@@ -363,19 +362,19 @@ export function SettingsForm({
               maxLength={4000}
             />
             <span className="mt-1 block text-[11px] text-zinc-500">
-              A small audio snippet that visitors can play on your profile. Visitors can mute it
-              globally. Direct .mp3 / .ogg / .wav https links work best.
+              Ein kurzer Audio-Schnipsel, den Besucher auf deinem Profil abspielen können.
+              Besucher können Sounds global muten. Direkte .mp3 / .ogg / .wav https-Links funktionieren am besten.
             </span>
           </label>
 
           <label className="block text-sm font-medium text-zinc-300">
-            Pinned post (optional)
+            Angepinnter Post (optional)
             <textarea
               className="mt-2 min-h-[70px] w-full resize-y rounded-xl border border-zinc-600/80 bg-zinc-950/70 px-4 py-3 text-sm leading-relaxed text-white shadow-inner shadow-black/20 focus:border-amber-500/45 focus:ring-2 focus:ring-amber-500/20"
               value={pinnedPost}
               onChange={(e) => setPinnedPost(e.target.value)}
               maxLength={PINNED_POST_MAX}
-              placeholder="A quote, mantra, or status shown at the top of your public profile."
+              placeholder="Zitat, Mantra oder Status, der oben in deinem öffentlichen Profil steht."
             />
             <span className="mt-1 block text-right text-[11px] text-zinc-500">
               {pinnedPost.length}/{PINNED_POST_MAX}
@@ -383,7 +382,7 @@ export function SettingsForm({
           </label>
 
           <label className="block text-sm font-medium text-zinc-300">
-            Favorite tags (optional)
+            Lieblings-Tags (optional)
             <input
               className="mt-2 min-h-12 w-full rounded-xl border border-zinc-600/80 bg-zinc-950/70 px-4 py-3 text-base text-white shadow-inner shadow-black/20 focus:border-amber-500/45 focus:ring-2 focus:ring-amber-500/20"
               value={favoriteTags}
@@ -397,10 +396,10 @@ export function SettingsForm({
           </label>
 
           <div className="rounded-xl border border-zinc-700/70 bg-zinc-950/40 p-4">
-            <h3 className="font-display text-base font-semibold text-white">Profile visuals</h3>
+            <h3 className="font-display text-base font-semibold text-white">Profil-Visuals</h3>
             <p className="mt-1 text-xs text-zinc-500">
-              Set your public profile look: anime background preset or custom upload, then tune blur
-              and brightness for readability.
+              Stelle den Look deines öffentlichen Profils ein: Preset oder eigener Upload, danach
+              Blur und Helligkeit feinjustieren.
             </p>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -437,7 +436,7 @@ export function SettingsForm({
                 className="inline-flex min-h-10 cursor-pointer items-center justify-center rounded-lg border border-zinc-600/80 bg-zinc-900/60 px-3 py-2 text-xs font-medium text-zinc-100 hover:border-zinc-500"
                 htmlFor="bg-file"
               >
-                Upload custom background
+                Eigenen Hintergrund hochladen
                 <input
                   id="bg-file"
                   ref={bgFileRef}
@@ -456,7 +455,7 @@ export function SettingsForm({
                     setBgPreset("");
                   }}
                 >
-                  Clear background
+                  Hintergrund entfernen
                 </Button>
               )}
             </div>
@@ -475,7 +474,7 @@ export function SettingsForm({
                 />
               </label>
               <label className="block text-xs font-medium text-zinc-400">
-                Brightness: {bgBrightness}%
+                Helligkeit: {bgBrightness}%
                 <input
                   type="range"
                   min={60}
@@ -490,7 +489,7 @@ export function SettingsForm({
           </div>
 
           <label className="block text-sm font-medium text-zinc-300">
-            Banner image (optional)
+            Banner-Bild (optional)
             <input
               className="mt-2 min-h-12 w-full rounded-xl border border-zinc-600/80 bg-zinc-950/70 px-4 py-3 text-base text-white shadow-inner shadow-black/20 focus:border-amber-500/45 focus:ring-2 focus:ring-amber-500/20"
               value={bannerUrl}
@@ -501,7 +500,7 @@ export function SettingsForm({
 
           <div className="grid gap-4 sm:grid-cols-3">
             <label className="block text-sm font-medium text-zinc-300">
-              Accent color
+              Accent-Farbe
               <input
                 type="color"
                 className="mt-2 h-12 w-full rounded-xl border border-zinc-600/80 bg-zinc-950/70 p-2"
@@ -510,19 +509,19 @@ export function SettingsForm({
               />
             </label>
             <label className="block text-sm font-medium text-zinc-300">
-              Profile layout
+              Profil-Layout
               <select
                 className="mt-2 min-h-12 w-full rounded-xl border border-zinc-600/80 bg-zinc-950/70 px-3 py-2 text-base text-white"
                 value={profileLayout}
                 onChange={(e) => setProfileLayout(e.target.value)}
               >
-                <option value="classic">Classic</option>
-                <option value="card-grid">Card grid</option>
+                <option value="classic">Klassisch</option>
+                <option value="card-grid">Card Grid</option>
                 <option value="spotlight">Spotlight</option>
               </select>
             </label>
             <label className="block text-sm font-medium text-zinc-300">
-              Card style
+              Card-Style
               <select
                 className="mt-2 min-h-12 w-full rounded-xl border border-zinc-600/80 bg-zinc-950/70 px-3 py-2 text-base text-white"
                 value={cardStyle}
@@ -540,7 +539,7 @@ export function SettingsForm({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={visualBg}
-                alt="Background preview"
+                alt="Hintergrund-Vorschau"
                 className="h-40 w-full object-cover"
                 style={{ filter: `blur(${bgBlur}px) brightness(${bgBrightness}%)` }}
               />
@@ -554,42 +553,42 @@ export function SettingsForm({
           ) : null}
           {profileMsg ? <p className="text-sm text-emerald-400">{profileMsg}</p> : null}
           <Button type="submit" disabled={profileLoading} className="min-h-12 w-full sm:w-auto">
-            {profileLoading ? "Saving…" : "Save profile"}
+            {profileLoading ? "Speichert…" : "Profil speichern"}
           </Button>
         </form>
       </Card>
 
       <Card hover={false} className="border-zinc-700/50">
-        <h2 className="font-display text-xl font-semibold text-white">Export your data</h2>
+        <h2 className="font-display text-xl font-semibold text-white">Deine Daten exportieren</h2>
         <p className="mt-1 text-sm text-zinc-400">
-          Download every rating you&apos;ve given and received as a CSV. Great for backups or your
-          own Excel deep-dives.
+          Lade alle vergebenen und erhaltenen Ratings als CSV herunter. Ideal für Backups oder
+          eigene Excel-Auswertungen.
         </p>
         <a
           href="/api/me/export"
           className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 text-sm font-semibold text-amber-200 hover:bg-amber-500/20"
         >
-          ⬇ Download CSV
+          ⬇ CSV herunterladen
         </a>
       </Card>
 
       <Card hover={false} className="border-zinc-700/50">
         <h2 className="font-display text-xl font-semibold text-white">Notifications</h2>
         <p className="mt-1 text-sm text-zinc-400">
-          Get a push when someone rates you. Works best after installing Friends Rank to your home
-          screen.
+          Erhalte eine Push-Nachricht, wenn dich jemand ranked. Funktioniert am besten, wenn du
+          Friends Rank auf dem Homescreen installierst.
         </p>
         <EnableNotifications vapidPublicKey={vapidPublicKey} className="mt-5" />
       </Card>
 
       <Card hover={false} className="border-zinc-700/50">
-        <h2 className="font-display text-xl font-semibold text-white">PIN (password)</h2>
+        <h2 className="font-display text-xl font-semibold text-white">PIN (Passwort)</h2>
         <p className="mt-1 text-sm text-zinc-400">
-          Your PIN is only for this app. Pick something strong and don&apos;t reuse bank passwords.
+          Deine PIN gilt nur für diese App. Wähle etwas Starkes und verwende kein anderes wichtiges Passwort erneut.
         </p>
         <form onSubmit={savePin} className="mt-6 space-y-5">
           <label className="block text-sm font-medium text-zinc-300">
-            Current PIN
+            Aktuelle PIN
             <input
               type="password"
               autoComplete="current-password"
@@ -600,7 +599,7 @@ export function SettingsForm({
             />
           </label>
           <label className="block text-sm font-medium text-zinc-300">
-            New PIN
+            Neue PIN
             <input
               type="password"
               autoComplete="new-password"
@@ -611,7 +610,7 @@ export function SettingsForm({
             />
           </label>
           <label className="block text-sm font-medium text-zinc-300">
-            Confirm new PIN
+            Neue PIN bestätigen
             <input
               type="password"
               autoComplete="new-password"
@@ -628,7 +627,7 @@ export function SettingsForm({
           ) : null}
           {pinMsg ? <p className="text-sm text-emerald-400">{pinMsg}</p> : null}
           <Button type="submit" disabled={pinLoading} className="min-h-12 w-full sm:w-auto">
-            {pinLoading ? "Updating…" : "Update PIN"}
+            {pinLoading ? "Aktualisiert…" : "PIN aktualisieren"}
           </Button>
         </form>
       </Card>
