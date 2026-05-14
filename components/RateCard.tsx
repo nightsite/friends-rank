@@ -14,6 +14,7 @@ import { ReasonTagPicker } from "@/components/ReasonTagPicker";
 import { parseReasons } from "@/lib/reason-tags";
 
 type Props = {
+  initialRatingId?: string | null;
   rateeSlug: string;
   displayName: string;
   avatarUrl?: string | null;
@@ -28,6 +29,7 @@ type Props = {
 };
 
 export function RateCard({
+  initialRatingId = null,
   rateeSlug,
   displayName,
   avatarUrl,
@@ -52,13 +54,14 @@ export function RateCard({
   });
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const hasSaved = Boolean(savedCreatedAt && savedUpdatedAt);
 
   async function save() {
     setError(null);
     if (rank < RANK_MIN || rank > RANK_MAX) {
-      setError("Pick a valid rank.");
+      setError("Wähle einen gültigen Rank.");
       return;
     }
     setStatus("saving");
@@ -79,7 +82,7 @@ export function RateCard({
     const data = (await res.json().catch(() => ({}))) as { error?: string };
     if (!res.ok) {
       setStatus("error");
-      setError(data.error || "Could not save");
+      setError(data.error || "Speichern fehlgeschlagen.");
       return;
     }
     setStatus("saved");
@@ -91,6 +94,23 @@ export function RateCard({
     setTimeout(() => setStatus("idle"), 1600);
   }
 
+  async function remove() {
+    if (!initialRatingId) return;
+    setDeleting(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/ratings/${initialRatingId}`, { method: "DELETE" });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setError(data.error ?? "Löschen fehlgeschlagen.");
+        return;
+      }
+      await router.refresh();
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
     <div className="glass-panel card-hover rounded-2xl border border-zinc-700/50 p-5 sm:p-6">
       <div className="flex flex-wrap items-start gap-4">
@@ -100,7 +120,7 @@ export function RateCard({
             <h3 className="font-display text-lg font-semibold text-white">{displayName}</h3>
             <div className="w-full sm:w-auto">
               <label className="sr-only" htmlFor={`rank-${rateeSlug}-${categorySlug}`}>
-                Choose rank
+                Rank auswählen
               </label>
               <select
                 id={`rank-${rateeSlug}-${categorySlug}`}
@@ -108,7 +128,7 @@ export function RateCard({
                 onChange={(e) => setRank(Number(e.target.value))}
                 className="h-11 min-w-[170px] rounded-xl border border-zinc-700/80 bg-zinc-950/60 px-3 text-sm font-medium text-zinc-100"
               >
-                <option value="">Choose rank...</option>
+                <option value="">Rank wählen...</option>
                 {RANK_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -124,13 +144,13 @@ export function RateCard({
           </div>
 
           <label className="mt-4 block text-xs font-semibold uppercase tracking-wider text-zinc-500">
-            Comment (optional)
+            Kommentar (optional)
             <textarea
               className="mt-2 min-h-[88px] w-full resize-y rounded-xl border border-zinc-600/80 bg-zinc-950/70 px-4 py-3 text-sm leading-relaxed text-zinc-100 shadow-inner shadow-black/20 transition focus:border-amber-500/45 focus:ring-2 focus:ring-amber-500/20"
               maxLength={COMMENT_MAX}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="What should they know?"
+              placeholder="Was sollte die Person wissen?"
             />
           </label>
 
@@ -144,7 +164,7 @@ export function RateCard({
 
           <div className="mt-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-              Attach (optional)
+              Anhang (optional)
             </p>
             <div className="mt-2">
               <MediaComposer value={media} onChange={setMedia} disabled={status === "saving"} />
@@ -159,17 +179,22 @@ export function RateCard({
             />
           ) : (
             <p className="mt-4 border-t border-zinc-800/80 pt-4 text-xs text-zinc-500">
-              Not saved yet - your rank and note will get timestamps after the first save.
+              Noch nicht gespeichert - nach dem ersten Speichern erscheinen Zeitstempel.
             </p>
           )}
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <Button onClick={save} disabled={status === "saving"}>
-              {status === "saving" ? "Saving..." : "Save rating"}
+              {status === "saving" ? "Speichert..." : "Rating speichern"}
             </Button>
+            {initialRatingId ? (
+              <Button variant="ghost" onClick={remove} disabled={deleting || status === "saving"}>
+                {deleting ? "Löscht..." : "Rating löschen"}
+              </Button>
+            ) : null}
             {status === "saved" ? (
               <span className="text-sm font-medium text-emerald-400/95">
-                Saved{rank === RANK_MAX ? " - Challenger confetti time 🎉" : ""}
+                Gespeichert{rank === RANK_MAX ? " - Challenger confetti 🎉" : ""}
               </span>
             ) : null}
             {error ? (

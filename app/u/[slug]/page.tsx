@@ -25,6 +25,7 @@ import { ThemeSongPlayer } from "@/components/ThemeSongPlayer";
 import { ShareableCardButton } from "@/components/ShareableCardButton";
 import { ProfileQrCode } from "@/components/ProfileQrCode";
 import { EmptyState } from "@/components/EmptyState";
+import { RatingDeleteButton } from "@/components/RatingDeleteButton";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -111,6 +112,15 @@ export default async function PublicProfilePage({ params }: Props) {
       ? await prisma.vaultNote
           .findUnique({
             where: { ownerId_targetId: { ownerId: session.userId, targetId: user.id } },
+          })
+          .catch(() => null)
+      : null;
+  const myProfileRating =
+    session.userId !== user.id
+      ? await prisma.profileRating
+          .findUnique({
+            where: { raterId_rateeId: { raterId: session.userId, rateeId: user.id } },
+            select: { id: true },
           })
           .catch(() => null)
       : null;
@@ -349,7 +359,7 @@ export default async function PublicProfilePage({ params }: Props) {
               You can submit one rank per profile every 7 days.
             </p>
             <div className="mt-3">
-              <ProfileRatingForm profileSlug={user.slug} />
+              <ProfileRatingForm profileSlug={user.slug} initialRatingId={myProfileRating?.id ?? null} />
             </div>
           </Card>
         ) : null}
@@ -422,7 +432,12 @@ export default async function PublicProfilePage({ params }: Props) {
                     <span className="font-medium text-white">{r.rater.displayName}</span> ·{" "}
                     <RankBadge value={r.stars} size="sm" className="align-middle" />
                   </p>
-                  <span className="text-xs text-zinc-500">{formatRelative(new Date(r.updatedAt))}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-zinc-500">{formatRelative(new Date(r.updatedAt))}</span>
+                    {session.isAdmin ? (
+                      <RatingDeleteButton endpoint={`/api/profile-ratings/${r.id}`} label="Admin löschen" />
+                    ) : null}
+                  </div>
                 </div>
                 {r.comment ? (
                   <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-200">{r.comment}</p>

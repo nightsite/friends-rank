@@ -10,9 +10,9 @@ type Item = {
 };
 
 const ITEMS: Item[] = [
-  { href: "/", label: "Home", icon: "🏠" },
+  { href: "/", label: "Start", icon: "🏠" },
   { href: "/discover", label: "Crew", icon: "👥" },
-  { href: "/u/me", label: "Me", icon: "👤" },
+  { href: "/u/me", label: "Ich", icon: "👤" },
   { href: "/inbox", label: "Inbox", icon: "📬" },
 ];
 
@@ -25,7 +25,7 @@ export function MobileBottomNav({ unreadCount = 0 }: Props) {
 
   return (
     <nav
-      aria-label="Primary mobile navigation"
+      aria-label="Primäre mobile Navigation"
       className="fixed inset-x-0 bottom-0 z-50 border-t border-zinc-800/80 bg-zinc-950/90 backdrop-blur-lg sm:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >

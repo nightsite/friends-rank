@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
-import { isAdminSlug } from "@/lib/admin";
 
 export const runtime = "nodejs";
 
@@ -18,7 +17,7 @@ type CreateBody = {
 export async function POST(request: NextRequest) {
   const session = await requireSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (!isAdminSlug(session.slug)) {
+  if (!session.isAdmin) {
     return NextResponse.json({ error: "Admin only." }, { status: 403 });
   }
 
@@ -73,7 +72,7 @@ type ToggleBody = {
 export async function PATCH(request: NextRequest) {
   const session = await requireSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (!isAdminSlug(session.slug)) {
+  if (!session.isAdmin) {
     return NextResponse.json({ error: "Admin only." }, { status: 403 });
   }
 

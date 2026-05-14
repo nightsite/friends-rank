@@ -8,13 +8,15 @@ import { RankBadge } from "@/components/RankBadge";
 
 type Props = {
   profileSlug: string;
+  initialRatingId?: string | null;
 };
 
-export function ProfileRatingForm({ profileSlug }: Props) {
+export function ProfileRatingForm({ profileSlug, initialRatingId = null }: Props) {
   const router = useRouter();
   const [rank, setRank] = useState(0);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -23,7 +25,7 @@ export function ProfileRatingForm({ profileSlug }: Props) {
     setErr(null);
     setMsg(null);
     if (rank < RANK_MIN || rank > RANK_MAX) {
-      setErr("Pick a valid rank.");
+      setErr("Wähle einen gültigen Rank.");
       return;
     }
 
@@ -36,15 +38,34 @@ export function ProfileRatingForm({ profileSlug }: Props) {
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
-        setErr(data.error || "Could not rate profile.");
+        setErr(data.error || "Profil-Rating fehlgeschlagen.");
         return;
       }
-      setMsg("Profile rating saved.");
+      setMsg("Profil-Rating gespeichert.");
       setComment("");
       setRank(0);
       router.refresh();
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function remove() {
+    if (!initialRatingId) return;
+    setErr(null);
+    setMsg(null);
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/profile-ratings/${initialRatingId}`, { method: "DELETE" });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setErr(data.error || "Profil-Rating konnte nicht gelöscht werden.");
+        return;
+      }
+      setMsg("Profil-Rating gelöscht.");
+      router.refresh();
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -57,7 +78,7 @@ export function ProfileRatingForm({ profileSlug }: Props) {
           onChange={(e) => setRank(Number(e.target.value))}
           className="mt-2 h-11 w-full rounded-xl border border-zinc-700/70 bg-zinc-950/60 px-3 text-sm text-zinc-100"
         >
-          <option value="">Choose rank...</option>
+          <option value="">Rank wählen...</option>
           {RANK_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -67,7 +88,7 @@ export function ProfileRatingForm({ profileSlug }: Props) {
       </label>
       {rank ? (
         <div className="flex items-center gap-2 text-sm text-zinc-300">
-          <span>Selected:</span>
+          <span>Ausgewählt:</span>
           <RankBadge value={rank} size="sm" />
         </div>
       ) : null}
@@ -76,7 +97,7 @@ export function ProfileRatingForm({ profileSlug }: Props) {
         maxLength={400}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder="Leave profile feedback..."
+        placeholder="Profil-Feedback schreiben..."
       />
       {err ? (
         <p className="text-sm text-red-400" role="alert">
@@ -84,9 +105,16 @@ export function ProfileRatingForm({ profileSlug }: Props) {
         </p>
       ) : null}
       {msg ? <p className="text-sm text-emerald-400">{msg}</p> : null}
-      <Button type="submit" disabled={loading}>
-        {loading ? "Saving..." : "Save profile rank"}
-      </Button>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button type="submit" disabled={loading || deleting}>
+          {loading ? "Speichert..." : "Profil-Rank speichern"}
+        </Button>
+        {initialRatingId ? (
+          <Button variant="ghost" type="button" onClick={remove} disabled={loading || deleting}>
+            {deleting ? "Löscht..." : "Rating löschen"}
+          </Button>
+        ) : null}
+      </div>
     </form>
   );
 }

@@ -36,14 +36,14 @@ export default async function CategoryPage({ params }: Props) {
       title={category.name}
       description={
         meta?.tagline ??
-        "Honest ranks + notes. You can update your rating anytime - timestamps update when you save."
+        "Ehrliche Ranks + Notizen. Du kannst dein Rating jederzeit updaten - beim Speichern werden die Zeiten aktualisiert."
       }
       actions={
         <Link
           href={`/leaderboard/${category.slug}`}
           className="inline-flex items-center justify-center rounded-xl border border-zinc-600/90 bg-zinc-950/50 px-4 py-2.5 text-sm font-medium text-zinc-100 shadow-sm transition hover:border-zinc-500 hover:bg-zinc-900/70"
         >
-          View leaderboard
+          Leaderboard ansehen
         </Link>
       }
     >
@@ -52,8 +52,8 @@ export default async function CategoryPage({ params }: Props) {
           {meta?.emoji ?? "⭐"}
         </span>
         <p className="text-sm text-zinc-500">
-          Rate each person once per category — saves <span className="text-zinc-400">upsert</span> so you
-          can revise later.
+          Bewerte jede Person pro Kategorie - gespeichert per{" "}
+          <span className="text-zinc-400">upsert</span>, damit du später anpassen kannst.
         </p>
       </div>
       <div className="grid gap-5">
@@ -62,6 +62,7 @@ export default async function CategoryPage({ params }: Props) {
           return (
             <RateCard
               key={u.id}
+              initialRatingId={r?.id ?? null}
               rateeSlug={u.slug}
               displayName={u.displayName}
               avatarUrl={u.avatarUrl}

@@ -23,6 +23,7 @@ import { getTitlesForUser } from "@/lib/titles";
 import { formatRelative } from "@/lib/format-time";
 import { ReasonTagsDisplay } from "@/components/ReasonTagsDisplay";
 import { EmptyState } from "@/components/EmptyState";
+import { RatingDeleteButton } from "@/components/RatingDeleteButton";
 
 export default async function MePage() {
   const session = await requireSession();
@@ -296,7 +297,12 @@ export default async function MePage() {
                                 {r.rater.displayName}
                               </Link>
                             </div>
-                            <RankBadge value={r.stars} size="sm" className="shrink-0" />
+                            <div className="flex items-center gap-2">
+                              <RankBadge value={r.stars} size="sm" className="shrink-0" />
+                              {session.isAdmin ? (
+                                <RatingDeleteButton endpoint={`/api/ratings/${r.id}`} label="Admin löschen" />
+                              ) : null}
+                            </div>
                           </div>
                           <ReviewTimestamp
                             createdAt={r.createdAt.toISOString()}

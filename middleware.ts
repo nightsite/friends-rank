@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getIronSession } from "iron-session";
 import { getSessionOptions, type SessionData } from "@/lib/session-config";
-import { isAdminSlug } from "@/lib/admin";
+import { isAdminSession } from "@/lib/admin";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const needsAdmin = pathname === "/admin" || pathname.startsWith("/admin/") || pathname.startsWith("/api/admin/");
-  if (needsAdmin && !isAdminSlug(session.slug)) {
+  if (needsAdmin && !isAdminSession(session)) {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Admin only." }, { status: 403 });
     }

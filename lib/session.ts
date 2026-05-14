@@ -3,12 +3,15 @@ import { cookies } from "next/headers";
 import { getSessionOptions, type SessionData } from "./session-config";
 import { touchStreak } from "./streak";
 import { touchLastSeen } from "./presence";
+import { isAdminSession } from "./admin";
 
 export type AuthedSession = {
   userId: string;
   slug: string;
   displayName: string;
   avatarUrl: string | null;
+  isAdmin: boolean;
+  isImpersonating: boolean;
 };
 
 export async function getSession() {
@@ -30,6 +33,8 @@ export async function requireSession(): Promise<AuthedSession | null> {
       slug: session.slug,
       displayName: session.displayName ?? session.slug,
       avatarUrl: session.avatarUrl ?? null,
+      isAdmin: isAdminSession(session),
+      isImpersonating: Boolean(session.isImpersonating),
     };
   } catch {
     return null;

@@ -12,7 +12,7 @@ export function LogoutButton() {
         window.location.href = "/login";
       }}
     >
-      Log out
+      Ausloggen
     </Button>
   );
 }

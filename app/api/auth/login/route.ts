@@ -57,6 +57,10 @@ export async function POST(request: NextRequest) {
   session.slug = user.slug;
   session.displayName = user.displayName;
   session.avatarUrl = user.avatarUrl ?? undefined;
+  session.adminUserId = undefined;
+  session.adminSlug = undefined;
+  session.adminDisplayName = undefined;
+  session.isImpersonating = false;
   await session.save();
   return response;
 }

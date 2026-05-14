@@ -7,27 +7,27 @@ export type AnimePreset = {
 export const ANIME_PRESETS: AnimePreset[] = [
   {
     id: "city-night",
-    label: "City Night",
+    label: "Focus",
     imageUrl:
       "https://i.pinimg.com/736x/ca/cc/67/cacc674994275b6c37abf861d54e0674.jpg",
   },
   {
     id: "sunset-train",
-    label: "Sunset Train",
+    label: "Aura",
     imageUrl:
-      "https://images.unsplash.com/photo-1618005198919-d3d4b5a92eee?auto=format&fit=crop&w=1600&q=80",
+      "https://i.pinimg.com/originals/5d/2c/44/5d2c44694918947aede42306cb7154d0.gif",
   },
   {
     id: "neon-street",
-    label: "Neon Street",
+    label: "Arcade",
     imageUrl:
       "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80",
   },
   {
     id: "rainy-window",
-    label: "Rainy Window",
+    label: "Neon",
     imageUrl:
-      "https://images.unsplash.com/photo-1498979237642-92f7a0f7a3c2?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80",
   },
 ];
 

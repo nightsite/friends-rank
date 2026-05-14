@@ -1,19 +1,19 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
-import { isAdminSlug } from "@/lib/admin";
 import { PageShell } from "@/components/ui/PageShell";
 import { Card } from "@/components/ui/Card";
 import { AdminInviteForm } from "@/components/admin/AdminInviteForm";
 import { AdminEventForm } from "@/components/admin/AdminEventForm";
 import { AdminEventToggleButton } from "@/components/admin/AdminEventToggleButton";
+import { AdminImpersonateButton } from "@/components/admin/AdminImpersonateButton";
 
 export default async function AdminPage() {
   const session = await requireSession();
   if (!session) redirect("/login");
-  if (!isAdminSlug(session.slug)) redirect("/");
+  if (!session.isAdmin) redirect("/");
 
-  const [users, ratings, profileRatings, invites, events, notifications] = await Promise.all([
+  const [users, ratings, profileRatings, invites, events, notifications, people] = await Promise.all([
     prisma.user.count(),
     prisma.rating.count(),
     prisma.profileRating.count(),
@@ -28,37 +28,38 @@ export default async function AdminPage() {
       take: 30,
     }),
     prisma.appNotification.count(),
+    prisma.user.findMany({ orderBy: { displayName: "asc" } }),
   ]);
 
   return (
     <PageShell
-      title="Admin dashboard"
-      description="Manage invite onboarding, seasonal events, and monitor usage."
+      title="Admin Dashboard"
+      description="Verwalte Einladungen, Seasonal-Events und Moderation."
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card hover={false} className="border-zinc-700/50">
-          <p className="text-xs text-zinc-500">Users</p>
+          <p className="text-xs text-zinc-500">User</p>
           <p className="mt-1 text-2xl font-semibold text-white">{users}</p>
         </Card>
         <Card hover={false} className="border-zinc-700/50">
-          <p className="text-xs text-zinc-500">Category ratings</p>
+          <p className="text-xs text-zinc-500">Kategorie-Ratings</p>
           <p className="mt-1 text-2xl font-semibold text-white">{ratings}</p>
         </Card>
         <Card hover={false} className="border-zinc-700/50">
-          <p className="text-xs text-zinc-500">Profile ratings</p>
+          <p className="text-xs text-zinc-500">Profil-Ratings</p>
           <p className="mt-1 text-2xl font-semibold text-white">{profileRatings}</p>
         </Card>
         <Card hover={false} className="border-zinc-700/50">
-          <p className="text-xs text-zinc-500">Notifications sent</p>
+          <p className="text-xs text-zinc-500">Gesendete Notifications</p>
           <p className="mt-1 text-2xl font-semibold text-white">{notifications}</p>
         </Card>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card hover={false} className="border-zinc-700/50">
-          <h2 className="font-display text-lg font-semibold text-white">Create invite token</h2>
+          <h2 className="font-display text-lg font-semibold text-white">Invite-Token erstellen</h2>
           <p className="mt-1 text-xs text-zinc-500">
-            Generate onboarding links. Redeeming can auto-award active seasonal badges.
+            Erzeugt Onboarding-Links. Beim Einlösen können aktive Seasonal-Badges vergeben werden.
           </p>
           <div className="mt-4">
             <AdminInviteForm />
@@ -66,9 +67,9 @@ export default async function AdminPage() {
         </Card>
 
         <Card hover={false} className="border-zinc-700/50">
-          <h2 className="font-display text-lg font-semibold text-white">Create seasonal event</h2>
+          <h2 className="font-display text-lg font-semibold text-white">Seasonal-Event erstellen</h2>
           <p className="mt-1 text-xs text-zinc-500">
-            Seasonal events appear in /events and can be claimed by users.
+            Events erscheinen unter /events und können von Usern geclaimt werden.
           </p>
           <div className="mt-4">
             <AdminEventForm />
@@ -77,10 +78,10 @@ export default async function AdminPage() {
       </div>
 
       <Card hover={false} className="border-zinc-700/50">
-        <h2 className="font-display text-lg font-semibold text-white">Recent invite tokens</h2>
+        <h2 className="font-display text-lg font-semibold text-white">Letzte Invite-Tokens</h2>
         <ul className="mt-3 space-y-2">
           {invites.length === 0 ? (
-            <li className="text-sm text-zinc-500">No invites created yet.</li>
+            <li className="text-sm text-zinc-500">Noch keine Invites erstellt.</li>
           ) : (
             invites.map((i) => (
               <li key={i.id} className="rounded-lg border border-zinc-800/70 bg-zinc-950/40 px-3 py-2 text-sm">
@@ -90,7 +91,7 @@ export default async function AdminPage() {
                     {i.note ? `· ${i.note}` : ""}
                   </p>
                   <p className="text-xs text-zinc-500">
-                    {i.redeemedBy ? `Redeemed by ${i.redeemedBy.displayName}` : "Not redeemed"}
+                    {i.redeemedBy ? `Eingelöst von ${i.redeemedBy.displayName}` : "Noch nicht eingelöst"}
                   </p>
                 </div>
               </li>
@@ -100,10 +101,29 @@ export default async function AdminPage() {
       </Card>
 
       <Card hover={false} className="border-zinc-700/50">
-        <h2 className="font-display text-lg font-semibold text-white">Seasonal events</h2>
+        <h2 className="font-display text-lg font-semibold text-white">Temporär in User-Accounts einloggen</h2>
+        <p className="mt-1 text-xs text-zinc-500">
+          Für Support/Moderation kannst du ohne PIN als beliebiger User rein. Danach im Header auf
+          &quot;Impersonation beenden&quot; klicken.
+        </p>
+        <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+          {people.map((u) => (
+            <li
+              key={u.id}
+              className="flex items-center justify-between gap-2 rounded-lg border border-zinc-800/70 bg-zinc-950/40 px-3 py-2"
+            >
+              <span className="text-sm text-zinc-200">{u.displayName}</span>
+              <AdminImpersonateButton slug={u.slug} label={u.displayName} />
+            </li>
+          ))}
+        </ul>
+      </Card>
+
+      <Card hover={false} className="border-zinc-700/50">
+        <h2 className="font-display text-lg font-semibold text-white">Seasonal-Events</h2>
         <ul className="mt-3 space-y-2">
           {events.length === 0 ? (
-            <li className="text-sm text-zinc-500">No events yet.</li>
+            <li className="text-sm text-zinc-500">Noch keine Events.</li>
           ) : (
             events.map((e) => (
               <li key={e.id} className="rounded-lg border border-zinc-800/70 bg-zinc-950/40 px-3 py-2">
@@ -111,7 +131,7 @@ export default async function AdminPage() {
                   <div>
                     <p className="text-sm font-medium text-zinc-100">{e.title}</p>
                     <p className="text-xs text-zinc-500">
-                      {e.slug} · claims {e._count.claims} · {e.isActive ? "active" : "inactive"}
+                      {e.slug} · Claims {e._count.claims} · {e.isActive ? "aktiv" : "inaktiv"}
                     </p>
                   </div>
                   <AdminEventToggleButton eventId={e.id} active={e.isActive} />

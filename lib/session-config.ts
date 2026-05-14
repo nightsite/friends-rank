@@ -5,6 +5,10 @@ export type SessionData = {
   slug?: string;
   displayName?: string;
   avatarUrl?: string;
+  adminUserId?: string;
+  adminSlug?: string;
+  adminDisplayName?: string;
+  isImpersonating?: boolean;
 };
 
 function getSessionPassword(): string {
