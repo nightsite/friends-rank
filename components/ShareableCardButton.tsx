@@ -14,24 +14,71 @@ export function ShareableCardButton({ slug, displayName }: Props) {
   const cardUrl = `/api/og/profile?slug=${encodeURIComponent(slug)}&v=story`;
   const profileUrl = typeof window !== "undefined" ? `${window.location.origin}/u/${slug}` : `/u/${slug}`;
 
+  async function createLocalFallbackCard(): Promise<Blob> {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1920;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("canvas-unavailable");
+
+    const bg = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    bg.addColorStop(0, "#0a0a0a");
+    bg.addColorStop(1, "#1f2937");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const glow = ctx.createRadialGradient(540, 500, 80, 540, 500, 620);
+    glow.addColorStop(0, "rgba(251,191,36,0.26)");
+    glow.addColorStop(1, "rgba(251,191,36,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#fbbf24";
+    ctx.font = "700 54px system-ui, -apple-system, Segoe UI, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("FRIENDS RANK", 540, 220);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "800 108px system-ui, -apple-system, Segoe UI, sans-serif";
+    ctx.fillText(displayName, 540, 930);
+
+    ctx.fillStyle = "#a1a1aa";
+    ctx.font = "600 50px system-ui, -apple-system, Segoe UI, sans-serif";
+    ctx.fillText(`@${slug}`, 540, 1010);
+
+    ctx.fillStyle = "#fef3c7";
+    ctx.font = "600 42px system-ui, -apple-system, Segoe UI, sans-serif";
+    ctx.fillText("Rate your crew. Level up together.", 540, 1160);
+
+    return new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error("canvas-to-blob-failed"));
+          return;
+        }
+        resolve(blob);
+      }, "image/png");
+    });
+  }
+
   async function shareCard() {
     setMsg(null);
     setBusy(true);
     try {
+      let blob: Blob;
       const res = await fetch(cardUrl, {
         credentials: "same-origin",
         cache: "no-store",
       });
       if (!res.ok) {
-        window.open(cardUrl, "_blank", "noopener,noreferrer");
-        setMsg(`Card wird direkt geöffnet (HTTP ${res.status}).`);
-        return;
-      }
-      const blob = await res.blob();
-      if (!blob.type.startsWith("image/")) {
-        window.open(cardUrl, "_blank", "noopener,noreferrer");
-        setMsg("Card wird direkt geöffnet.");
-        return;
+        blob = await createLocalFallbackCard();
+        setMsg(`Server-Card fehlgeschlagen (HTTP ${res.status}) - lokale Card erstellt.`);
+      } else {
+        blob = await res.blob();
+        if (!blob.type.startsWith("image/")) {
+          blob = await createLocalFallbackCard();
+          setMsg("Server-Card ungültig - lokale Card erstellt.");
+        }
       }
       const file = new File([blob], `${slug}-friends-rank.png`, { type: blob.type || "image/png" });
 
