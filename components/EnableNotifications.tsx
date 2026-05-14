@@ -8,13 +8,13 @@ type Props = {
   className?: string;
 };
 
-function urlBase64ToUint8Array(b64: string): Uint8Array {
+function urlBase64ToArrayBuffer(b64: string): ArrayBuffer {
   const padding = "=".repeat((4 - (b64.length % 4)) % 4);
   const base64 = (b64 + padding).replace(/-/g, "+").replace(/_/g, "/");
   const raw = atob(base64);
   const arr = new Uint8Array(raw.length);
   for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-  return arr;
+  return arr.buffer.slice(arr.byteOffset, arr.byteOffset + arr.byteLength);
 }
 
 export function EnableNotifications({ vapidPublicKey, className = "" }: Props) {
@@ -59,7 +59,7 @@ export function EnableNotifications({ vapidPublicKey, className = "" }: Props) {
       const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+        applicationServerKey: urlBase64ToArrayBuffer(vapidPublicKey),
       });
       const json = sub.toJSON();
       const res = await fetch("/api/push/subscribe", {
